@@ -5,16 +5,27 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.origicheck.africababa.R;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
+import com.origicheck.africababa.datamodels.products.categories.ProductCategoriesInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by victor on 10/2/2015.
  */
-public class FragmentCategories extends FragmentWrapper {
+public class FragmentCategories extends FragmentWrapper implements AdapterView.OnItemClickListener {
 
     private View mCategoriesView;
+    private ListView mCategoriesListView;
+
+    private List<ProductCategoriesInfo> productCategoriesInfos;
+    private List<String> productCategories;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
@@ -55,6 +66,27 @@ public class FragmentCategories extends FragmentWrapper {
         return R.layout.fragment_product_categories;
     }
 
-    private void initChildViews(View mCategoriesView) {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    private void initChildViews(View categoriesView) {
+
+        mCategoriesListView = (ListView) categoriesView.findViewById(R.id.fragment_product_categories_listView_categories);
+        populateProductCategories();
+        mCategoriesListView.setOnItemClickListener(this);
+
+    }
+
+
+    private void populateProductCategories() {
+        productCategoriesInfos = getUtils().getTransactionsManager().getProductCategoriesList();
+        productCategories = new ArrayList<String>(productCategoriesInfos.size());
+
+        for (ProductCategoriesInfo productCategoriesInfo : productCategoriesInfos) {
+            productCategories.add(productCategoriesInfo.getCategory());
+        }
+        mCategoriesListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, productCategories));
     }
 }
