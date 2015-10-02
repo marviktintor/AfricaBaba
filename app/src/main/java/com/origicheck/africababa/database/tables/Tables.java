@@ -16,7 +16,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_BUYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_USER_ID + " integer NOT NULL," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_BUYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_USER_ID + " INTEGER NOT NULL," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblCatalogue {
@@ -31,7 +31,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_ID_SALE + " integer NOT NULL," + COL_PRODUCT_ID + " integer NOT NULL," + COL_QUANTITY + " integer NOT NULL," + COL_AVAILABLE + " integer NOT NULL," + COL_STORE_ID + " integer NOT NULL," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_ID_SALE + " INTEGER NOT NULL," + COL_PRODUCT_ID + " INTEGER NOT NULL," + COL_QUANTITY + " INTEGER NOT NULL," + COL_AVAILABLE + " INTEGER NOT NULL," + COL_STORE_ID + " INTEGER NOT NULL," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblCategory {
@@ -43,7 +43,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_CAT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_CAT_NAME + " varchar DEFAULT NULL," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_CAT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_CAT_NAME + " VARCHAR DEFAULT NULL," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblCertificate {
@@ -55,7 +55,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_CERTIFICATE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_CERTIFICATE_TYPE + " varchar DEFAULT NULL," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_CERTIFICATE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_CERTIFICATE_TYPE + " VARCHAR DEFAULT NULL," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblFiles {
@@ -67,7 +67,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_FILE_ID + " integer NOT NULL DEFAULT '0'," + COL_FILE_URL_NAME + " varchar DEFAULT NULL," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_FILE_ID + " INTEGER NOT NULL DEFAULT '0'," + COL_FILE_URL_NAME + " VARCHAR DEFAULT NULL," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblGroup {
@@ -80,7 +80,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_GROUP_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_GROUP_NAME + " varchar DEFAULT NULL," + COL_CAT_ID + " integer," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_GROUP_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_GROUP_NAME + " VARCHAR DEFAULT NULL," + COL_CAT_ID + " INTEGER," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblLocation {
@@ -94,7 +94,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_LOCATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_ADDRESS + " varchar DEFAULT NULL," + COL_LOCATION_LAT + " varchar DEFAULT NULL," + COL_LOCATION_LONG + " varchar DEFAULT NULL," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_LOCATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_ADDRESS + " VARCHAR DEFAULT NULL," + COL_LOCATION_LAT + " VARCHAR DEFAULT NULL," + COL_LOCATION_LONG + " VARCHAR DEFAULT NULL," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblMessages {
@@ -108,7 +108,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_MESSAGE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_SUPPLIER_ID + " integer," + COL_TIME_ADDED + " long," + COL_MESSAGE + " varchar DEFAULT NULL," + COL_FILE_ID + " integer" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_MESSAGE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_SUPPLIER_ID + " INTEGER," + COL_TIME_ADDED + " long," + COL_MESSAGE + " VARCHAR DEFAULT NULL," + COL_FILE_ID + " INTEGER" + ");";
     }
 
     public static class TblOrder {
@@ -124,7 +124,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCT_ID + " integer," + COL_SUPPLIER_ID + " integer," + COL_BUYER_ID + " integer," + COL_TIME_ADDED + " long," + COL_QUANTITY + " integer," + COL_PRICE + " integer" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCT_ID + " INTEGER," + COL_SUPPLIER_ID + " INTEGER," + COL_BUYER_ID + " INTEGER," + COL_TIME_ADDED + " long," + COL_QUANTITY + " INTEGER," + COL_PRICE + " INTEGER" + ");";
     }
 
     public static class TblProducts {
@@ -144,7 +144,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_PRODUCT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCT_NAME + " varchar DEFAULT NULL," + COL_PRODUCT_DESCRIPTION + " varchar DEFAULT NULL," + COL_TIME_ADDED + " long," + COL_SUPPLIER_ID + " integer," + COL_STORE_ID + " integer," + COL_QUICK_SALE_ID + " integer," + COL_MOQ + " integer," + COL_GROUP_ID + " integer," + COL_FILE_ID + " varchar(251) DEFAULT NULL," + COL_PRICE + " varchar" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_PRODUCT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCT_NAME + " VARCHAR DEFAULT NULL," + COL_PRODUCT_DESCRIPTION + " VARCHAR DEFAULT NULL," + COL_TIME_ADDED + " long," + COL_SUPPLIER_ID + " INTEGER," + COL_STORE_ID + " INTEGER," + COL_QUICK_SALE_ID + " INTEGER," + COL_MOQ + " INTEGER," + COL_GROUP_ID + " INTEGER," + COL_FILE_ID + " VARCHAR(251) DEFAULT NULL," + COL_PRICE + " VARCHAR" + ");";
     }
 
     public static class TblQuicksale {
@@ -156,7 +156,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_QUICK_SALE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_TIME_ADDED + " long," + COL_PRODUCT_ID + " integer" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_QUICK_SALE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_TIME_ADDED + " long," + COL_PRODUCT_ID + " INTEGER" + ");";
     }
 
     public static class TblQuotes {
@@ -171,11 +171,12 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_QUOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCT_NAME + " varchar DEFAULT NULL," + COL_PRODUCT_ID + " integer," + COL_PRODUCT_DESCRIPTION + " varchar DEFAULT NULL," + COL_PRODUCT_QUANTITY + " integer," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_QUOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCT_NAME + " VARCHAR DEFAULT NULL," + COL_PRODUCT_ID + " INTEGER," + COL_PRODUCT_DESCRIPTION + " VARCHAR DEFAULT NULL," + COL_PRODUCT_QUANTITY + " INTEGER," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblStore {
         public static final String COL_STORE_ID = "store_id";
+        public static final String COL_STORE_NAME = "store_name";
         public static final String COL_PRODUCTS_ID = "products_id";
         public static final String COL_QUANTITY = "quantity";
         public static final String COL_LOCATION_ID = "location_id";
@@ -185,7 +186,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_STORE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCTS_ID + " integer," + COL_QUANTITY + " integer," + COL_LOCATION_ID + " integer," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_STORE_ID + " INTEGER ," + COL_STORE_NAME + " VARCHAR ," + COL_PRODUCTS_ID + " INTEGER," + COL_QUANTITY + " INTEGER," + COL_LOCATION_ID + " INTEGER," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblSuppliers {
@@ -200,7 +201,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_SUPPLIER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_USER_ID + " integer NOT NULL," + COL_CERTIFICATE_ID + " integer NOT NULL," + COL_LOCATION_ID + " integer NOT NULL," + COL_SUPPLIER_TYPE + " integer NOT NULL," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_SUPPLIER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_USER_ID + " INTEGER NOT NULL," + COL_CERTIFICATE_ID + " INTEGER NOT NULL," + COL_LOCATION_ID + " INTEGER NOT NULL," + COL_SUPPLIER_TYPE + " INTEGER NOT NULL," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblUsers {
@@ -217,7 +218,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_FILE_ID + " integer NOT NULL," + COL_FULL_NAME + " varchar NOT NULL," + COL_USER_PHONE_NUMBER + " varchar NOT NULL," + COL_USER_EMAIL + " varchar NOT NULL," + COL_USERNAME + " varchar NOT NULL," + COL_USER_PASSWORD + " varchar NOT NULL," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_FILE_ID + " INTEGER NOT NULL," + COL_FULL_NAME + " VARCHAR NOT NULL," + COL_USER_PHONE_NUMBER + " VARCHAR NOT NULL," + COL_USER_EMAIL + " VARCHAR NOT NULL," + COL_USERNAME + " VARCHAR NOT NULL," + COL_USER_PASSWORD + " VARCHAR NOT NULL," + COL_TIME_ADDED + " long" + ");";
     }
 
 
