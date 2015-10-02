@@ -13,7 +13,6 @@ import com.origicheck.africababa.R;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.datamodels.products.categories.ProductCategoriesInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,9 +20,9 @@ import java.util.List;
  */
 public class FragmentCategories extends FragmentWrapper implements AdapterView.OnItemClickListener {
 
+    public OnProductCategoryClick onProductCategoryClick;
     private View mCategoriesView;
     private ListView mCategoriesListView;
-
     private List<ProductCategoriesInfo> productCategoriesInfos;
     private List<String> productCategories;
 
@@ -43,7 +42,7 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
 
     @Override
     public void onAttachFragment() {
-
+        onProductCategoryClick = (OnProductCategoryClick) getActivity();
     }
 
     @Override
@@ -68,7 +67,10 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        if (parent == mCategoriesListView) {
+            int productCategory = productCategoriesInfos.get(position).getCategoryId();
+            onProductCategoryClick.onProductCategoryClick(productCategory);
+        }
     }
 
     private void initChildViews(View categoriesView) {
@@ -79,14 +81,15 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
 
     }
 
-
     private void populateProductCategories() {
         productCategoriesInfos = getUtils().getTransactionsManager().getProductCategoriesList();
-        productCategories = new ArrayList<String>(productCategoriesInfos.size());
+        productCategories = getUtils().getViewPopulator().getProductCategoriesList(productCategoriesInfos);
 
-        for (ProductCategoriesInfo productCategoriesInfo : productCategoriesInfos) {
-            productCategories.add(productCategoriesInfo.getCategory());
-        }
         mCategoriesListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, productCategories));
+    }
+
+
+    public interface OnProductCategoryClick {
+        void onProductCategoryClick(int productCategory);
     }
 }
