@@ -31,12 +31,22 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
 
     }
 
+    @Override
+    public void receiveBundle() {
+
+    }
+
     @Nullable
     @Override
     public void onCreateFragmentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mCategoriesView = getActivity().getLayoutInflater().inflate(getParentLayout(), container, false);
         initChildViews(mCategoriesView);
         getContainer().addView(mCategoriesView);
+    }
+
+    @Override
+    public void consumeBundle() {
+
     }
 
 

@@ -27,9 +27,17 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
     private List<ProductGroupsInfo> productGroupsInfos;
     private List<String> productGroups;
 
+    private OnProductGroupClick onProductGroupClick;
+    private int productCategory = -1;
+
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
 
+    }
+
+    @Override
+    public void receiveBundle() {
+        setProductCategory(getArguments().getInt(Intents.EXTRA_PRODUCT_CATEGORY, -1));
     }
 
     @Nullable
@@ -41,10 +49,15 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
         getContainer().addView(mProductGroupsView);
     }
 
+    @Override
+    public void consumeBundle() {
+        populateProductGroups();
+    }
+
 
     @Override
     public void onAttachFragment() {
-
+        onProductGroupClick = (OnProductGroupClick) getActivity();
     }
 
     @Override
@@ -67,14 +80,21 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
         return R.layout.fragment_product_groups;
     }
 
+    public int getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(int productCategory) {
+        this.productCategory = productCategory;
+    }
+
     private void initChildViews(View productGroupsView) {
         mProductsGroupListView = (ListView) productGroupsView.findViewById(R.id.fragment_product_groups_listView_groups);
-        populateProductGroups();
         mProductsGroupListView.setOnItemClickListener(this);
     }
 
     private void populateProductGroups() {
-        int productCategory = getArguments().getInt(Intents.EXTRA_PRODUCT_CATEGORY, -1);
+        int productCategory = getProductCategory();
         productGroupsInfos = getUtils().getTransactionsManager().getProductGroupsInfos(productCategory);
         productGroups = getUtils().getViewPopulator().getProductGroupsList(productGroupsInfos);
         mProductsGroupListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, productGroups));
@@ -83,6 +103,13 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (parent == mProductsGroupListView) {
+            int productGroup = productGroupsInfos.get(position).getProductGroupId();
+            onProductGroupClick.onProductGroupClick(productGroup);
+        }
+    }
 
+    public interface OnProductGroupClick {
+        void onProductGroupClick(int productGroup);
     }
 }

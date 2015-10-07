@@ -27,8 +27,15 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
     private List<StoresInfo> storesInfos;
     private List<String> stores;
 
+    private OnClickStore onClickStore;
+
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void receiveBundle() {
 
     }
 
@@ -41,10 +48,15 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
         getContainer().addView(mStoresView);
     }
 
+    @Override
+    public void consumeBundle() {
+
+    }
+
 
     @Override
     public void onAttachFragment() {
-
+        onClickStore = (OnClickStore) getActivity();
     }
 
     @Override
@@ -83,6 +95,12 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (parent == mStoresListView) {
+            onClickStore.onClickStore(storesInfos.get(position).getStoreId());
+        }
+    }
 
+    public interface OnClickStore {
+        void onClickStore(int storeId);
     }
 }

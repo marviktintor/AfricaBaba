@@ -2,6 +2,8 @@ package com.origicheck.africababa.fragments.products.tiles;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,26 +15,56 @@ import com.origicheck.africababa.R;
 import com.origicheck.africababa.adapters.products.ProductsAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
-import com.origicheck.africababa.datamodels.products.simple.ProductInfosSimple;
+import com.origicheck.africababa.datamodels.products.advanced.AdvancedProductsInfo;
+import com.origicheck.africababa.datamodels.products.simple.SimpleProductsInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by victor on 8/24/2015.
  */
-public class FragmentProductsTiles extends FragmentWrapper implements View.OnClickListener {
+public class FragmentProductsTiles extends FragmentWrapper implements View.OnClickListener, TextWatcher {
 
     private View mProductView;
     private GridView mProductsGridView;
     private ImageView mProductsViewStyle;
     private AutoCompleteTextView mSearchProducts;
 
+    private List<AdvancedProductsInfo> mAdvancedProductsInfo;
+    private List<SimpleProductsInfo> mSimpleProductsInfos;
+
     private OnProductTilesToggleViewClick onProductToggleViewClick;
+
+    private int storeId = -1;
+    private int productGroup = -1;
+
+    private boolean showQuickSaleProducts = false;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
+        setStoreId();
+    }
 
+
+    @Override
+    public void receiveBundle() {
+        Bundle extras = getArguments();
+        if (extras != null) {
+
+            String action = extras.getString(Intents.EXTRA_PRODUCTS_ACTION, Intents.ACTION_SHOW_ALL_PRODUCTS);
+
+            if (action.equals(Intents.ACTION_SHOW_ALL_PRODUCTS)) {
+            }
+            if (action.equals(Intents.ACTION_SHOW_STORE_PRODUCTS)) {
+                setStoreId();
+            }
+            if (action.equals(Intents.ACTION_SHOW_GROUP_PRODUCTS)) {
+                setProductGroup();
+            }
+            if (action.equals(Intents.ACTION_SHOW_QUICK_SALE_PRODUCTS)) {
+                setShowQuickSaleProducts(true);
+            }
+        }
     }
 
     @Nullable
@@ -44,6 +76,11 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
     }
 
+    @Override
+    public void consumeBundle() {
+        mSearchProducts.setText(getArguments().getString(Intents.EXTRA_PRODUCTS_SEARCH, ""));
+    }
+
 
     @Override
     public void onAttachFragment() {
@@ -52,7 +89,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
     @Override
     public void onResumeFragment() {
-        populateProducts();
+        populateProducts(mSearchProducts.getText().toString());
     }
 
 
@@ -66,40 +103,36 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        populateProducts(mSearchProducts.getText().toString());
+    }
+
     private void initChildViews(View productView) {
         mProductsGridView = (GridView) productView.findViewById(R.id.fragment_products_tiles_gridView_products);
+
         mProductsViewStyle = (ImageView) productView.findViewById(R.id.fragment_products_tiles_imageView_toggle_view);
-        mSearchProducts = (AutoCompleteTextView) productView.findViewById(R.id.fragment_products_tiles_autoCompleteTextView_products);
-
-        mSearchProducts.setText(getArguments().getString(Intents.EXTRA_PRODUCTS_SEARCH, ""));
-
         mProductsViewStyle.setOnClickListener(this);
+
+        mSearchProducts = (AutoCompleteTextView) productView.findViewById(R.id.fragment_products_tiles_autoCompleteTextView_products);
+        mSearchProducts.addTextChangedListener(this);
+
     }
 
     @Override
     public int getParentLayout() {
         return R.layout.fragment_products_tiles;
     }
-
-    private int getProductsDisplayStyle() {
-        return R.layout.list_products_tiles;
-    }
-
-    private void populateProducts() {
-        mProductsGridView.setAdapter(new ProductsAdapter(getActivity(), getProductsDisplayStyle(), getSampleProducts()));
-    }
-
-    public List<ProductInfosSimple> getSampleProducts() {
-        List<ProductInfosSimple> sampleProducts = new ArrayList<ProductInfosSimple>();
-        sampleProducts.add(new ProductInfosSimple(-1, "Biashara Monitor", "Kitamu", 2000));
-        sampleProducts.add(new ProductInfosSimple(-1, "Kazi Chap Chap", "BEAC", 1500));
-        sampleProducts.add(new ProductInfosSimple(-1, "Africa Baba", "Tubman Rd.", 1000));
-        sampleProducts.add(new ProductInfosSimple(-1, "Kazi Finder", "Origi-Check", 1500));
-
-
-        return sampleProducts;
-    }
-
 
     @Override
     public void onClick(View v) {
@@ -108,13 +141,52 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
         }
     }
 
+    private int getProductsDisplayStyle() {
+        return R.layout.list_products_tiles;
+    }
+
+    private void populateProducts(String product) {
+        mAdvancedProductsInfo = getUtils().getTransactionsManager().getAdvancedProductsInfo(product, getStoreId(), getProductGroup(), isShowQuickSaleProducts());
+        mSimpleProductsInfos = getUtils().getViewPopulator().getSimpleProductsInfo(mAdvancedProductsInfo);
+        mProductsGridView.setAdapter(new ProductsAdapter(getActivity(), getProductsDisplayStyle(), mSimpleProductsInfos));
+    }
+
+    public void setStoreId() {
+        if (getArguments() != null) {
+            storeId = getArguments().getInt(Intents.EXTRA_STORE, getStoreId());
+        }
+    }
+
+    public void setProductGroup() {
+        if (getArguments() != null) {
+            productGroup = getArguments().getInt(Intents.EXTRA_PRODUCT_GROUP, -1);
+        }
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public int getProductGroup() {
+        return productGroup;
+    }
+
+    public boolean isShowQuickSaleProducts() {
+        return showQuickSaleProducts;
+    }
+
+    public void setShowQuickSaleProducts(boolean showQuickSaleProducts) {
+        this.showQuickSaleProducts = showQuickSaleProducts;
+    }
+
     private void toggleProductsDisplayStyle() {
         int productFragmentLayout = R.layout.fragment_products_details;
         int productDisplayStyle = R.layout.list_products_details;
 
-        Bundle args = new Bundle();
+        Bundle args = getArguments() == null ? new Bundle() : getArguments();
         args.putInt(Intents.EXTRA_PRODUCTS_FRAGMENT_LAYOUT, productFragmentLayout);
         args.putInt(Intents.EXTRA_PRODUCTS_DISPLAY_STYLE, productDisplayStyle);
+        args.putInt(Intents.EXTRA_STORE, getStoreId());
         args.putString(Intents.EXTRA_PRODUCTS_SEARCH, mSearchProducts.getText().toString());
 
         onProductToggleViewClick.onProductTilesToggleViewClick(args);

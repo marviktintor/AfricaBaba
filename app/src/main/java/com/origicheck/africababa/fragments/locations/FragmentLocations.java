@@ -33,12 +33,22 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
 
     }
 
+    @Override
+    public void receiveBundle() {
+
+    }
+
     @Nullable
     @Override
     public void onCreateFragmentView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mLocationsView = getActivity().getLayoutInflater().inflate(getParentLayout(), container, false);
         initChildViews(mLocationsView);
         getContainer().addView(mLocationsView);
+    }
+
+    @Override
+    public void consumeBundle() {
+
     }
 
 
