@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.origicheck.africababa.R;
-import com.origicheck.africababa.adapters.products.ProductsAdapter;
+import com.origicheck.africababa.adapters.products.general.ProductsAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.advanced.AdvancedProductsInfo;
@@ -39,10 +39,15 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
     private int productGroup = -1;
 
     private boolean showQuickSaleProducts = false;
+    private String activityTitle;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-        setStoreId();
+    }
+
+    @Override
+    public String getActivityTitle() {
+        return activityTitle;
     }
 
     @Nullable
@@ -84,8 +89,9 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
     @Override
     public void receiveBundle() {
         Bundle extras = getArguments();
-        if (extras != null) {
+        activityTitle = getString(R.string.title_fragment_products);
 
+        if (extras != null) {
             String action = extras.getString(Intents.EXTRA_PRODUCTS_ACTION, Intents.ACTION_SHOW_ALL_PRODUCTS);
 
             if (action.equals(Intents.ACTION_SHOW_ALL_PRODUCTS)) {
@@ -98,6 +104,7 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
                 setProductGroup();
             }
             if (action.equals(Intents.ACTION_SHOW_QUICK_SALE_PRODUCTS)) {
+                activityTitle = getString(R.string.title_fragment_products_quick_sale);
                 setShowQuickSaleProducts(true);
             }
         }
@@ -105,6 +112,7 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
 
     @Override
     public void consumeBundle() {
+        setStoreId();
         mSearchProducts.setText(getArguments().getString(Intents.EXTRA_PRODUCTS_SEARCH, ""));
     }
 

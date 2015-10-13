@@ -34,6 +34,10 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
     }
 
     @Override
+    public String getActivityTitle() {
+        return getActivity().getResources().getString(R.string.title_fragment_locations);
+    }
+    @Override
     public void receiveBundle() {
 
     }

@@ -34,6 +34,13 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
 
     }
 
+
+    @Override
+    public String getActivityTitle() {
+        return getActivity().getResources().getString(R.string.title_fragment_stores);
+    }
+
+
     @Override
     public void receiveBundle() {
 

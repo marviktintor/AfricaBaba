@@ -162,7 +162,6 @@ public class Tables {
     public static class TblQuotes {
         public static final String COL_QUOTE_ID = "Quote_id";
         public static final String COL_PRODUCT_NAME = "product_name";
-        public static final String COL_PRODUCT_ID = "product_id";
         public static final String COL_PRODUCT_DESCRIPTION = "product_description";
         public static final String COL_PRODUCT_QUANTITY = "product_quantity";
         public static final String COL_TIME_ADDED = "time_added";
@@ -171,7 +170,7 @@ public class Tables {
 
         public static final Uri CONTENT_URI = Uri.parse("content://com.origicheck.africababa.database.provider.DataProvider/" + TABLE_NAME);
 
-        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_QUOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCT_NAME + " VARCHAR DEFAULT NULL," + COL_PRODUCT_ID + " INTEGER," + COL_PRODUCT_DESCRIPTION + " VARCHAR DEFAULT NULL," + COL_PRODUCT_QUANTITY + " INTEGER," + COL_TIME_ADDED + " long" + ");";
+        public static final String SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" + COL_QUOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_PRODUCT_NAME + " VARCHAR DEFAULT NULL," + COL_PRODUCT_DESCRIPTION + " VARCHAR DEFAULT NULL," + COL_PRODUCT_QUANTITY + " INTEGER," + COL_TIME_ADDED + " long" + ");";
     }
 
     public static class TblStore {

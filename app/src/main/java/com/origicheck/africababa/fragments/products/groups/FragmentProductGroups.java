@@ -36,6 +36,10 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
     }
 
     @Override
+    public String getActivityTitle() {
+        return getActivity().getResources().getString(R.string.title_fragment_product_groups);
+    }
+    @Override
     public void receiveBundle() {
         setProductCategory(getArguments().getInt(Intents.EXTRA_PRODUCT_CATEGORY, -1));
     }

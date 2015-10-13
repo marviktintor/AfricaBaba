@@ -32,6 +32,10 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
     }
 
     @Override
+    public String getActivityTitle() {
+        return getActivity().getResources().getString(R.string.title_fragment_product_categories);
+    }
+    @Override
     public void receiveBundle() {
 
     }

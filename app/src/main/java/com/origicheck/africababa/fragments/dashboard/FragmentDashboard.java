@@ -74,6 +74,10 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
     }
 
     @Override
+    public String getActivityTitle() {
+        return getActivity().getResources().getString(R.string.title_fragment_dashboard);
+    }
+    @Override
     public void consumeBundle() {
 
     }

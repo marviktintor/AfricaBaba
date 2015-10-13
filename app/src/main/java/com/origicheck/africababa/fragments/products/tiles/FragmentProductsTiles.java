@@ -12,7 +12,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.origicheck.africababa.R;
-import com.origicheck.africababa.adapters.products.ProductsAdapter;
+import com.origicheck.africababa.adapters.products.general.ProductsAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.advanced.AdvancedProductsInfo;
@@ -40,14 +40,22 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
     private boolean showQuickSaleProducts = false;
 
+    private String activityTitle;
+
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
         setStoreId();
     }
 
+    @Override
+    public String getActivityTitle() {
+        return activityTitle;
+    }
 
     @Override
     public void receiveBundle() {
+        activityTitle = getString(R.string.title_fragment_products);
+
         Bundle extras = getArguments();
         if (extras != null) {
 
@@ -62,6 +70,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
                 setProductGroup();
             }
             if (action.equals(Intents.ACTION_SHOW_QUICK_SALE_PRODUCTS)) {
+                activityTitle = getString(R.string.title_fragment_products_quick_sale);
                 setShowQuickSaleProducts(true);
             }
         }
