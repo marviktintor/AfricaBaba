@@ -1,41 +1,40 @@
 package com.origicheck.africababa.fragments.products.quotes;
 
-import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.origicheck.africababa.R;
+import com.origicheck.africababa.adapters.products.quotes.ProductQuotesAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.datamodels.products.quotes.ProductQuotesInfo;
+import com.origicheck.africababa.dialogs.NewQuoteDialog;
 
 import java.util.List;
 
 /**
  * Created by victor on 10/13/2015.
  */
-public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnItemClickListener, View.OnClickListener, TextWatcher {
 
     private View mQuotesView;
     private List<ProductQuotesInfo> mQuotesInfos;
 
+    private EditText mSearch;
     private ImageView mCreateQuote;
     private ListView mProductQuotes;
 
-    private View mNewQuoteView;
-    private Dialog mNewQuoteDialog;
-    private EditText mProductName;
-    private EditText mProductDescription;
-    private EditText mProductQuantity;
-    private Button mAddQuote;
-    private Button mClearQuote;
+    private NewQuoteDialog mNewQuoteDialog;
+
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
@@ -103,31 +102,46 @@ public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnIte
     }
 
     private void initChildViews(View quotesView) {
-
+        mSearch = (EditText) quotesView.findViewById(R.id.fragment_quotes_editText_search_quote);
         mCreateQuote = (ImageView) quotesView.findViewById(R.id.fragment_quotes_imageView_create_quote);
         mProductQuotes = (ListView) quotesView.findViewById(R.id.fragment_quotes_listView_quotes);
 
+
         mCreateQuote.setOnClickListener(this);
         mProductQuotes.setOnItemClickListener(this);
+        mSearch.addTextChangedListener(this);
+
+        populateQuotes();
     }
 
     private void showCreateNewQuoteDialog() {
-        mNewQuoteDialog = new Dialog(getActivity());
-        mNewQuoteView = getActivity().getLayoutInflater().inflate(R.layout.dialog_quote_items, null, false);
-        initDialogViews(mNewQuoteView);
-        mNewQuoteDialog.setContentView(mNewQuoteView);
-        mNewQuoteDialog.show();
+        mNewQuoteDialog = new NewQuoteDialog(getActivity());
+        mNewQuoteDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                getUtils().toast("Dialog Dismissed");
+                populateQuotes();
+            }
+        });
     }
 
-    private void initDialogViews(View mNewQuoteView) {
-        mProductName = (EditText) mNewQuoteView.findViewById(R.id.dialog_quote_items_editText_product_name);
-        mProductDescription = (EditText) mNewQuoteView.findViewById(R.id.dialog_quote_items_editText_product_description);
-        mProductQuantity = (EditText) mNewQuoteView.findViewById(R.id.dialog_quote_items_editText_product_quantity);
+    private void populateQuotes() {
+        mQuotesInfos = getUtils().getTransactionsManager().getProductQuotesInfo(mSearch.getText().toString());
+        mProductQuotes.setAdapter(new ProductQuotesAdapter(getActivity(), R.layout.list_quotes, mQuotesInfos));
+    }
 
-        mAddQuote = (Button) mNewQuoteView.findViewById(R.id.dialog_quote_items_editText_button_create_quote);
-        mClearQuote = (Button) mNewQuoteView.findViewById(R.id.dialog_quote_items_editText_button_clear_quote);
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        mAddQuote.setOnClickListener(this);
-        mClearQuote.setOnClickListener(this);
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        populateQuotes();
     }
 }

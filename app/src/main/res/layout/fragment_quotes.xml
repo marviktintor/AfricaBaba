@@ -5,10 +5,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <EditText
+        android:id="@+id/fragment_quotes_editText_search_quote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="@string/search_quotes" />
+
     <ListView
         android:id="@+id/fragment_quotes_listView_quotes"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
+        android:layout_below="@+id/fragment_quotes_editText_search_quote"
         tools:listitem="@layout/list_quotes">
 
     </ListView>
