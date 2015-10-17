@@ -1,12 +1,9 @@
-package com.origicheck.africababa.sync.engines.syncengine;
+package com.origicheck.africababa.sync.worker;
 
-import android.accounts.Account;
-import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProviderClient;
 import android.content.Context;
-import android.content.SyncResult;
-import android.os.Bundle;
-import android.widget.Toast;
+import android.util.Log;
+
+import com.origicheck.africababa.controller.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -19,9 +16,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by victor on 10/14/2015.
+ * Created by victor on 10/17/2015.
  */
-public class Syncer extends AbstractThreadedSyncAdapter {
+public class SyncExecutor extends Thread {
+
+
     // Actions
     public static final String ACTION = "action";
     public static final String ACTION_INSERT = "insert";
@@ -71,13 +70,30 @@ public class Syncer extends AbstractThreadedSyncAdapter {
     public static final String INTENT_QUERY_SUPPLIERS = "query_suppliers";
     public static final String INTENT_QUERY_USERS = "query_users";
     private FormData mFormData = null;
-    public Syncer(Context context, boolean autoInitialize) {
-        super(context, autoInitialize);
+    private Utils utils;
+    private Context context;
+
+    public SyncExecutor(Context context) {
+        this.context = context;
+        initAll();
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    void initAll() {
+        utils = new Utils(getContext());
+    }
+
+    public Utils getUtils() {
+        return utils;
     }
 
     @Override
-    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        Toast.makeText(getContext(), "Start Sync", Toast.LENGTH_SHORT).show();
+    public void run() {
+        super.run();
+
         syncBuyers();
     }
 
@@ -90,7 +106,7 @@ public class Syncer extends AbstractThreadedSyncAdapter {
         return mFormData;
     }
 
-    public void serverSync(String formData) {
+    public void serverSync(String transactionHost, String formData) throws Exception {
         try {
             URL url = new URL("http://192.168.43.47/africababa/worker.php");
 
@@ -117,7 +133,9 @@ public class Syncer extends AbstractThreadedSyncAdapter {
                 stringBuffer.append(dataStream);
             }
 
-            Toast.makeText(getContext(), stringBuffer.toString(), Toast.LENGTH_SHORT).show();
+            Log.d("DATA_STREAM", stringBuffer.toString());
+
+            getUtils().getTransactionsManager().consumeSyncData(transactionHost, stringBuffer.toString());
 
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
@@ -147,12 +165,16 @@ public class Syncer extends AbstractThreadedSyncAdapter {
             printError("Could not build Form data to send");
             return;
         }
-        syncFormData(formData.getData());
+        syncFormData(transactionHost, formData.getData());
     }
 
-    private void syncFormData(String formData) {
+    private void syncFormData(String transactionHost, String formData) {
         // TODO Auto-generated method stub
-        serverSync(formData);
+        try {
+            serverSync(transactionHost, formData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void syncBuyers() {
@@ -367,49 +389,14 @@ public class Syncer extends AbstractThreadedSyncAdapter {
         syncUsers();
     }
 
-    private <T> void printError(T t) {
+    private <T> void printError(String data) {
         // TODO Auto-generated method stub
-        System.err.println(t);
+        Log.i("SYNC_EXECUTOR", data);
     }
 
-    private <T> void printData(T t) {
+    private <T> void printData(String data) {
         // TODO Auto-generated method stub
-        System.out.println(t);
+        Log.i("SYNC_EXECUTOR", data);
     }
 
-    class FormData {
-
-        private String formDataBuilder = "";
-
-        public FormData() {
-            // TODO Auto-generated constructor stub
-        }
-
-        public void startBuildingFormData() {
-            setFormDataBuilder("");
-        }
-
-        public String getFormDataBuilder() {
-            return formDataBuilder;
-        }
-
-        public void setFormDataBuilder(String formDataBuilder) {
-            this.formDataBuilder = formDataBuilder;
-        }
-
-        public String appendFormData(String key, String value) {
-
-            if (getFormDataBuilder().equals("")) {
-                formDataBuilder = key + "=" + value;
-            } else {
-                formDataBuilder += "&" + key + "=" + value;
-            }
-            return getData();
-        }
-
-        public String getData() {
-            // TODO Auto-generated method stub
-            return formDataBuilder;
-        }
-    }
 }

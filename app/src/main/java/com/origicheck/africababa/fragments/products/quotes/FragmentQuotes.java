@@ -119,7 +119,6 @@ public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnIte
         mNewQuoteDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                getUtils().toast("Dialog Dismissed");
                 populateQuotes();
             }
         });

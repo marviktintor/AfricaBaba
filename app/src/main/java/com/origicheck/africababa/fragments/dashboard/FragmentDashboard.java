@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ import com.origicheck.africababa.adapters.dashboard.DashboardAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.dashboard.DashboardInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutor;
 
 import java.util.List;
 import java.util.Random;
@@ -82,7 +84,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
 
     }
 
-    private void initChildViews(View mDashboardView) {
+    private void initChildViews(View dashboardView) {
         mDashboardItemsListView = (ListView) getParentView().findViewById(R.id.fragment_dashboard_listView_navigation_menu);
         mDashboardItemsListView.setOnItemClickListener(this);
 
@@ -105,6 +107,15 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
         changeCarouselImage(true);
 
         radioButtons = new RadioButton[]{radioButton1, radioButton2, radioButton3, radioButton4, radioButton5};
+
+        final Button sync = (Button) dashboardView.findViewById(R.id.startSync);
+        sync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SyncExecutor syncExecutor = new SyncExecutor(getActivity());
+                syncExecutor.start();
+            }
+        });
     }
 
     private View getParentView() {

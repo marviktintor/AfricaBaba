@@ -1,6 +1,9 @@
 package com.origicheck.africababa.fragments.products.orders;
 
-import android.content.DialogInterface;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,24 +15,31 @@ import android.widget.ListView;
 import com.origicheck.africababa.R;
 import com.origicheck.africababa.adapters.products.ordered.OrderedItemsAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
+import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.orders.OrderedItemsInfo;
-import com.origicheck.africababa.dialogs.DialogConfigOrderedItem;
 
 import java.util.List;
 
 /**
  * Created by victor on 10/8/2015.
  */
-public class FragmentOrderedItems extends FragmentWrapper implements AdapterView.OnItemClickListener, DialogInterface.OnDismissListener {
+public class FragmentOrderedItems extends FragmentWrapper implements AdapterView.OnItemClickListener {
 
     private List<OrderedItemsInfo> mOrderedItemsInfos;
     private ListView mOrderedItemsListView;
     private View mOrderedItemsView;
-    private DialogConfigOrderedItem dialogConfigOrderedItem;
+    private BroadcastReceiver orderedItemsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_NEW_ORDERED_ITEM)) {
+                populateListItems();
+            }
+        }
+    };
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-
+        getActivity().registerReceiver(orderedItemsReceiver, new IntentFilter(Intents.ACTION_NEW_ORDERED_ITEM));
     }
 
     @Override
@@ -73,7 +83,7 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
     @Override
 
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(orderedItemsReceiver);
     }
 
     @Override
@@ -84,7 +94,8 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (parent == mOrderedItemsListView) {
-            showDialog(position);
+            int productId = mOrderedItemsInfos.get(position).getProductId();
+            showOrderedItemsDialog(productId);
         }
     }
 
@@ -101,17 +112,8 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
         mOrderedItemsListView.setAdapter(new OrderedItemsAdapter(getActivity(), R.layout.list_ordered_items, mOrderedItemsInfos));
     }
 
+    private void showOrderedItemsDialog(int productId) {
+        getUtils().showOrderedItemsDialog(productId);
 
-    private void showDialog(int position) {
-        int productId = mOrderedItemsInfos.get(position).getProductId();
-        String productName = getUtils().getTransactionsManager().getTblProducts().getProductName(productId);
-        int productQuantity = mOrderedItemsInfos.get(position).getQuantity();
-        dialogConfigOrderedItem = new DialogConfigOrderedItem(getActivity(), productId, productName, productQuantity);
-        dialogConfigOrderedItem.setOnDismissListener(this);
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        populateListItems();
     }
 }

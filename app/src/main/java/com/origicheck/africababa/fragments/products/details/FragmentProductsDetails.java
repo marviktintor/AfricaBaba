@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * Created by victor on 8/24/2015.
  */
-public class FragmentProductsDetails extends FragmentWrapper implements View.OnClickListener, TextWatcher {
+public class FragmentProductsDetails extends FragmentWrapper implements View.OnClickListener, TextWatcher, AdapterView.OnItemClickListener {
 
     private View mProductView;
     private ListView mProductsListView;
@@ -118,6 +119,7 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
 
     private void initChildViews(View productView) {
         mProductsListView = (ListView) productView.findViewById(R.id.fragment_product_details_listView_products);
+        mProductsListView.setOnItemClickListener(this);
 
         mProductsViewStyle = (ImageView) productView.findViewById(R.id.fragment_product_details_imageView_toggle_view);
         mProductsViewStyle.setOnClickListener(this);
@@ -148,6 +150,13 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (parent == mProductsListView) {
+            int productId = mAdvancedProductsInfo.get(position).getProductId();
+            getUtils().showOrderedItemsDialog(productId);
+        }
+    }
     public void setStoreId() {
         if (getArguments() != null) {
             storeId = getArguments().getInt(Intents.EXTRA_STORE, -1);

@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * Created by victor on 8/24/2015.
  */
-public class FragmentProductsTiles extends FragmentWrapper implements View.OnClickListener, TextWatcher {
+public class FragmentProductsTiles extends FragmentWrapper implements View.OnClickListener, TextWatcher, AdapterView.OnItemClickListener {
 
     private View mProductView;
     private GridView mProductsGridView;
@@ -129,6 +130,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
     private void initChildViews(View productView) {
         mProductsGridView = (GridView) productView.findViewById(R.id.fragment_products_tiles_gridView_products);
+        mProductsGridView.setOnItemClickListener(this);
 
         mProductsViewStyle = (ImageView) productView.findViewById(R.id.fragment_products_tiles_imageView_toggle_view);
         mProductsViewStyle.setOnClickListener(this);
@@ -147,6 +149,14 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
     public void onClick(View v) {
         if (v == mProductsViewStyle) {
             toggleProductsDisplayStyle();
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (parent == mProductsGridView) {
+            int productId = mAdvancedProductsInfo.get(position).getProductId();
+            getUtils().showOrderedItemsDialog(productId);
         }
     }
 
@@ -200,6 +210,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
         onProductToggleViewClick.onProductTilesToggleViewClick(args);
     }
+
 
     public interface OnProductTilesToggleViewClick {
         void onProductTilesToggleViewClick(Bundle extras);

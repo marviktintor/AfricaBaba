@@ -5,6 +5,18 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/startSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Sync" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/fragment_dashboard_linearLayout_carousel_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
