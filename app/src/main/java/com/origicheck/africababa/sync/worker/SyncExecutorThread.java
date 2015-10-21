@@ -395,12 +395,12 @@ public class SyncExecutorThread extends Thread {
 
     private <T> void printError(String data) {
         // TODO Auto-generated method stub
-        Log.i("SYNC_EXECUTOR", data);
+        Log.e("SYNC_EXECUTOR", data);
     }
 
     private <T> void printData(String data) {
         // TODO Auto-generated method stub
-        Log.i("SYNC_EXECUTOR", data);
+        Log.d("SYNC_EXECUTOR", data);
     }
 
 }
