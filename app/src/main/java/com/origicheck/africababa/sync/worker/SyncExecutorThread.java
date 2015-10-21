@@ -18,7 +18,7 @@ import java.net.URL;
 /**
  * Created by victor on 10/17/2015.
  */
-public class SyncExecutor extends Thread {
+public class SyncExecutorThread extends Thread {
 
 
     // Actions
@@ -73,7 +73,7 @@ public class SyncExecutor extends Thread {
     private Utils utils;
     private Context context;
 
-    public SyncExecutor(Context context) {
+    public SyncExecutorThread(Context context) {
         this.context = context;
         initAll();
     }
@@ -93,8 +93,7 @@ public class SyncExecutor extends Thread {
     @Override
     public void run() {
         super.run();
-
-        syncBuyers();
+        syncAll();
     }
 
     private int getUserId() {
@@ -168,13 +167,18 @@ public class SyncExecutor extends Thread {
         syncFormData(transactionHost, formData.getData());
     }
 
-    private void syncFormData(String transactionHost, String formData) {
+    private void syncFormData(final String transactionHost, final String formData) {
         // TODO Auto-generated method stub
-        try {
-            serverSync(transactionHost, formData);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    serverSync(transactionHost, formData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     public void syncBuyers() {

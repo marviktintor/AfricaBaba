@@ -1,2 +1,10 @@
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountType="@string/account_type" />
+              android:accountType="@string/account_type"
+
+              android:allowParallelSyncs="true"
+              android:contentAuthority="com.manager.biashara.provider.DataProvider"
+              android:isAlwaysSyncable="true"
+              android:supportsUploading="false"
+              android:userVisible="true"
+
+    />
