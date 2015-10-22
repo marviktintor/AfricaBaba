@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.origicheck.africababa.prefs.types.IPreferences;
+import com.origicheck.africababa.prefs.types.declaration.IPreferences;
+import com.origicheck.africababa.prefs.types.keys.PrefKey;
 
 /**
  * Created by victor on 10/21/2015.
@@ -53,23 +54,23 @@ public class PrefsManager implements IPreferences {
         getEditor().commit();
     }
 
-    private <T> T read(String preference, T typeOf, T defaultValue) {
+    private <T> T read(String preference, Class<T> componentType, T defaultValue) {
 
 
-        if (typeOf instanceof Boolean) {
+        if (componentType == Boolean.class) {
             return (T) Boolean.valueOf(getSharedPreferences().getBoolean(preference, (Boolean) defaultValue));
 
         }
-        if (typeOf instanceof Float) {
+        if (componentType == Float.class) {
             return (T) Float.valueOf(getSharedPreferences().getFloat(preference, (Float) defaultValue));
         }
-        if (typeOf instanceof Integer) {
+        if (componentType == Integer.class) {
             return (T) Integer.valueOf(getSharedPreferences().getInt(preference, (Integer) defaultValue));
         }
-        if (typeOf instanceof Long) {
+        if (componentType == Long.class) {
             return (T) Long.valueOf(getSharedPreferences().getLong(preference, (Long) defaultValue));
         }
-        if (typeOf instanceof String) {
+        if (componentType == String.class) {
             return (T) String.valueOf(getSharedPreferences().getString(preference, (String) defaultValue));
         }
 
@@ -144,6 +145,21 @@ public class PrefsManager implements IPreferences {
     @Override
     public void setStoresCount(int storesCount) {
 
+    }
+
+    @Override
+    public void setLoggedIn(boolean loggedIn) {
+        commit(PrefKey.LOGGED_IN, loggedIn);
+    }
+
+    @Override
+    public void setLoggedIn(boolean loggedIn) {
+        commit(PrefKey.LOGGED_IN, loggedIn);
+    }
+
+    @Override
+    public boolean isLoggedIn() {
+        return read(PrefKey.LOGGED_IN, Boolean.TYPE, false);
     }
 
     @Override

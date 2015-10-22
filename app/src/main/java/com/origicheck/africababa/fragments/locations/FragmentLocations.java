@@ -86,7 +86,7 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
         mLocationsListView.setOnItemClickListener(this);
 
         locationsInfos = getUtils().getTransactionsManager().getLocationInfos();
-        mLocations = getUtils().getViewPopulator().getLocationsList(locationsInfos);
+        mLocations = getUtils().getViewCreator().getLocationsList(locationsInfos);
         mLocationsListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mLocations));
     }
 

@@ -166,7 +166,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
     private void populateProducts(String product) {
         mAdvancedProductsInfo = getUtils().getTransactionsManager().getAdvancedProductsInfo(product, getStoreId(), getProductGroup(), isShowQuickSaleProducts());
-        mSimpleProductsInfos = getUtils().getViewPopulator().getSimpleProductsInfo(mAdvancedProductsInfo);
+        mSimpleProductsInfos = getUtils().getViewCreator().getSimpleProductsInfo(mAdvancedProductsInfo);
         mProductsGridView.setAdapter(new ProductsAdapter(getActivity(), getProductsDisplayStyle(), mSimpleProductsInfos));
     }
 

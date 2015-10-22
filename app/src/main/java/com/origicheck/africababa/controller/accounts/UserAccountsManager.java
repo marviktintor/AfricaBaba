@@ -12,10 +12,10 @@ import com.origicheck.africababa.database.provider.DataProvider;
 /**
  * Created by victor on 10/14/2015.
  */
-public class UserAccounts {
+public class UserAccountsManager {
     private Context context;
 
-    public UserAccounts(Context context) {
+    public UserAccountsManager(Context context) {
         this.context = context;
 
         if (!isAccountExists(getContext().getResources().getString(R.string.account_type))) {
@@ -45,6 +45,10 @@ public class UserAccounts {
             }
         }
         return false;
+    }
+
+    public boolean isExistsUserAccount() {
+        return isAccountExists(getContext().getResources().getString(R.string.app_name));
     }
 
     private void forceSync(Account account) {

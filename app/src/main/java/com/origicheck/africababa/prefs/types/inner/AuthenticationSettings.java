@@ -5,6 +5,9 @@ package com.origicheck.africababa.prefs.types.inner;
  */
 public interface AuthenticationSettings {
 
+    boolean isLoggedIn();
+
+    void setLoggedIn(boolean loggedIn);
 
     String getUsername();
 

@@ -138,7 +138,7 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
     private void populateProducts(String product) {
 
         mAdvancedProductsInfo = getUtils().getTransactionsManager().getAdvancedProductsInfo(product, getStoreId(), getProductGroup(), isShowQuickSaleProducts());
-        mSimpleProductsInfos = getUtils().getViewPopulator().getSimpleProductsInfo(mAdvancedProductsInfo);
+        mSimpleProductsInfos = getUtils().getViewCreator().getSimpleProductsInfo(mAdvancedProductsInfo);
         mProductsListView.setAdapter(new ProductsAdapter(getActivity(), getProductsDisplayStyle(), mSimpleProductsInfos));
     }
 

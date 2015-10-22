@@ -97,7 +97,7 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
 
     private void populateProductCategories() {
         productCategoriesInfos = getUtils().getTransactionsManager().getProductCategoriesList();
-        productCategories = getUtils().getViewPopulator().getProductCategoriesList(productCategoriesInfos);
+        productCategories = getUtils().getViewCreator().getProductCategoriesList(productCategoriesInfos);
 
         mCategoriesListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, productCategories));
     }

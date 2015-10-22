@@ -75,10 +75,12 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
         getContainer().addView(mDashboardView);
     }
 
+
     @Override
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_dashboard);
     }
+
     @Override
     public void consumeBundle() {
 
@@ -151,7 +153,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
     }
 
     private void populateDashboardItems() {
-        dashboardInfos = getUtils().getViewPopulator().getDashboardItems();
+        dashboardInfos = getUtils().getViewCreator().getDashboardItems();
         mDashboardItemsListView.setAdapter(new DashboardAdapter(getActivity(), R.layout.list_dashboard_items, dashboardInfos));
     }
 
@@ -167,6 +169,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
         }
         if (buttonView == radioButton1) {
             setSliderImage(0);
+
         }
         if (buttonView == radioButton2) {
             setSliderImage(1);

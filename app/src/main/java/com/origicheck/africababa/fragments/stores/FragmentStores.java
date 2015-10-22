@@ -95,7 +95,7 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
     private void populateStores() {
         int locationId = getArguments().getInt(Intents.EXTRA_LOCATION, -1);
         storesInfos = getUtils().getTransactionsManager().getStoresInfos(locationId);
-        stores = getUtils().getViewPopulator().getStoresList(storesInfos);
+        stores = getUtils().getViewCreator().getStoresList(storesInfos);
         mStoresListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, stores));
 
     }

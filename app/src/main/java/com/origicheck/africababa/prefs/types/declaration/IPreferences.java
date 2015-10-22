@@ -1,4 +1,4 @@
-package com.origicheck.africababa.prefs.types;
+package com.origicheck.africababa.prefs.types.declaration;
 
 import com.origicheck.africababa.prefs.types.inner.AfricaBabaPreferences;
 import com.origicheck.africababa.prefs.types.inner.AuthenticationSettings;
@@ -51,6 +51,12 @@ public interface IPreferences extends AfricaBabaPreferences, AuthenticationSetti
 
     @Override
     void setStoresCount(int storesCount);
+
+    @Override
+    boolean isLoggedIn();
+
+    @Override
+    void setLoggedIn(boolean loggedIn);
 
     @Override
     String getUsername();

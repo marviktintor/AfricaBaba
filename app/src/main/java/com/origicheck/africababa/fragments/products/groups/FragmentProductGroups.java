@@ -100,7 +100,7 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
     private void populateProductGroups() {
         int productCategory = getProductCategory();
         productGroupsInfos = getUtils().getTransactionsManager().getProductGroupsInfos(productCategory);
-        productGroups = getUtils().getViewPopulator().getProductGroupsList(productGroupsInfos);
+        productGroups = getUtils().getViewCreator().getProductGroupsList(productGroupsInfos);
         mProductsGroupListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, productGroups));
 
     }
