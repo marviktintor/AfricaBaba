@@ -9,6 +9,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Xfermode;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
@@ -23,6 +25,7 @@ public abstract class BaseImageView extends ImageView {
     //    private BitmapShader mBitmapShader;
     private Bitmap mMaskBitmap;
     private Paint mPaint;
+    @Nullable
     private WeakReference<Bitmap> mWeakBitmap;
 
     public BaseImageView(Context context) {
@@ -30,12 +33,12 @@ public abstract class BaseImageView extends ImageView {
         sharedConstructor(context);
     }
 
-    public BaseImageView(Context context, AttributeSet attrs) {
+    public BaseImageView(@NonNull Context context, AttributeSet attrs) {
         super(context, attrs);
         sharedConstructor(context);
     }
 
-    public BaseImageView(Context context, AttributeSet attrs, int defStyle) {
+    public BaseImageView(@NonNull Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         sharedConstructor(context);
     }
@@ -54,7 +57,7 @@ public abstract class BaseImageView extends ImageView {
 
     @SuppressLint("DrawAllocation")
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         if (!isInEditMode()) {
             int i = canvas.saveLayer(0.0f, 0.0f, getWidth(), getHeight(),
                     null, Canvas.ALL_SAVE_FLAG);

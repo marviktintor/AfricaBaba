@@ -3,6 +3,8 @@ package com.origicheck.africababa.prefs.manager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.origicheck.africababa.prefs.types.declaration.IPreferences;
 import com.origicheck.africababa.prefs.types.keys.PrefKey;
@@ -16,7 +18,7 @@ public class PrefsManager implements IPreferences {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    public PrefsManager(Context context) {
+    public PrefsManager(@NonNull Context context) {
         this.context = context;
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -30,11 +32,14 @@ public class PrefsManager implements IPreferences {
     }
 
     public SharedPreferences.Editor getEditor() {
+        if (editor == null) {
+            editor = getSharedPreferences().edit();
+        }
         return editor;
     }
 
     private <T> void commit(String preference, T typeOf) {
-        editor = getSharedPreferences().edit();
+
 
         if (typeOf instanceof Boolean) {
             getEditor().putBoolean(preference, (Boolean) typeOf);
@@ -148,30 +153,27 @@ public class PrefsManager implements IPreferences {
     }
 
     @Override
-    public void setLoggedIn(boolean loggedIn) {
-        commit(PrefKey.LOGGED_IN, loggedIn);
-    }
-
-    @Override
-    public void setLoggedIn(boolean loggedIn) {
-        commit(PrefKey.LOGGED_IN, loggedIn);
-    }
-
-    @Override
     public boolean isLoggedIn() {
-        return read(PrefKey.LOGGED_IN, Boolean.TYPE, false);
+        return read(PrefKey.LOGGED_IN, Boolean.class, false);
     }
 
+    @Override
+    public void setLoggedIn(boolean loggedIn) {
+        commit(PrefKey.LOGGED_IN, loggedIn);
+    }
+
+    @Nullable
     @Override
     public String getUsername() {
-        return null;
+        return read(PrefKey.USERNAME, String.class, getDisplayName());
     }
 
     @Override
     public void setUsername(String username) {
-
+        commit(PrefKey.USERNAME, username);
     }
 
+    @Nullable
     @Override
     public String getSessionId() {
         return null;
@@ -212,6 +214,7 @@ public class PrefsManager implements IPreferences {
 
     }
 
+    @NonNull
     @Override
     public String[] getThemeColors() {
         return new String[0];
@@ -242,6 +245,7 @@ public class PrefsManager implements IPreferences {
 
     }
 
+    @NonNull
     @Override
     public String[] getTextColors() {
         return new String[0];
@@ -262,6 +266,7 @@ public class PrefsManager implements IPreferences {
 
     }
 
+    @NonNull
     @Override
     public String[] getTextStyles() {
         return new String[0];
@@ -314,81 +319,97 @@ public class PrefsManager implements IPreferences {
 
     @Override
     public int getUserId() {
-        return 0;
+        return read(PrefKey.USER_ID, Integer.class, -1);
     }
 
     @Override
     public void setUserId(int userId) {
-
+        commit(PrefKey.USER_ID, userId);
     }
 
     @Override
     public int getBuyerId() {
-        return 0;
+        return read(PrefKey.BUYER_ID, Integer.class, getUserId());
     }
 
     @Override
     public void setBuyerId(int buyerId) {
-
+        commit(PrefKey.BUYER_ID, buyerId);
     }
 
     @Override
     public int getSellerId() {
-        return 0;
+        return read(PrefKey.SELLER_ID, Integer.class, getUserId());
     }
 
     @Override
     public void setSellerId(int sellerId) {
-
+        commit(PrefKey.SELLER_ID, sellerId);
     }
 
     @Override
     public int getSupplierId() {
-        return 0;
+        return getSellerId();
     }
 
     @Override
     public void setSupplierId(int supplierId) {
-
+        setSellerId(supplierId);
     }
 
+    @Nullable
     @Override
     public String getDisplayName() {
-        return null;
+        return read(PrefKey.DISPLAY_NAME, String.class, null);
     }
 
     @Override
     public void setDisplayName(String displayName) {
-
+        commit(PrefKey.DISPLAY_NAME, displayName);
     }
 
     @Override
+    public int getDisplayAvatar() {
+        return read(PrefKey.DISPLAY_AVATAR, Integer.class, PrefKey.DISPLAY_AVATAR_NONE);
+    }
+
+    @Override
+    public void setDisplayAvatar(int displayAvatar) {
+        commit(PrefKey.DISPLAY_AVATAR, displayAvatar);
+    }
+
+    @Nullable
+    @Override
     public String getContactEmail() {
-        return null;
+        return read(PrefKey.CONTACT_EMAIL, String.class, null);
     }
 
     @Override
     public void setContactEmail(String contactEmail) {
-
+        commit(PrefKey.CONTACT_EMAIL, contactEmail);
     }
 
+    @Nullable
     @Override
     public String getContactPhone() {
-        return null;
+        return read(PrefKey.CONTACT_PHONE, String.class, null);
     }
 
     @Override
     public void setContactPhone(String contactPhone) {
-
+        commit(PrefKey.CONTACT_PHONE, contactPhone);
     }
 
+    @Nullable
     @Override
     public String getWebsite() {
-        return null;
+        return read(PrefKey.WEBSITE, String.class, null);
     }
 
     @Override
     public void setWebsite(String website) {
-
+        commit(PrefKey.WEBSITE, website);
     }
+
+    public void clearPreferences() { getEditor().clear().commit();}
 }

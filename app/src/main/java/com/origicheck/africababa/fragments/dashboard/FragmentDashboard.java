@@ -7,12 +7,12 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,7 +24,6 @@ import com.origicheck.africababa.adapters.dashboard.DashboardAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.dashboard.DashboardInfo;
-import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 import java.util.Random;
@@ -45,6 +44,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
 
     private OnDashboardListItemClick onDashboardListItemClick;
 
+    @NonNull
     private int[] carouselImages = {
             R.drawable.image_1,
             R.drawable.image_2,
@@ -76,6 +76,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
     }
 
 
+    @NonNull
     @Override
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_dashboard);
@@ -86,7 +87,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
 
     }
 
-    private void initChildViews(View dashboardView) {
+    private void initChildViews(@NonNull View dashboardView) {
         mDashboardItemsListView = (ListView) getParentView().findViewById(R.id.fragment_dashboard_listView_navigation_menu);
         mDashboardItemsListView.setOnItemClickListener(this);
 
@@ -110,15 +111,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
 
         radioButtons = new RadioButton[]{radioButton1, radioButton2, radioButton3, radioButton4, radioButton5};
 
-        final Button sync = (Button) dashboardView.findViewById(R.id.startSync);
 
-        sync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity());
-                syncExecutor.start();
-            }
-        });
     }
 
     private View getParentView() {
@@ -228,6 +221,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
         }
     }
 
+    @NonNull
     private int[] getSliderImages() {
         return carouselImages;
     }
@@ -238,7 +232,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
 
     private class Receiver extends BroadcastReceiver {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, @NonNull Intent intent) {
             if (intent.getAction().equals(Intents.ACTION_SHOW_NEXT_CAROUSEL_IMAGE)) {
                 changeCarouselImage(false);
             }

@@ -26,6 +26,10 @@ public interface UserSettings {
 
     void setDisplayName(String displayName);
 
+    int getDisplayAvatar();
+
+    void setDisplayAvatar(int displayAvatar);
+
     String getContactEmail();
 
     void setContactEmail(String contactEmail);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +29,10 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
     private List<OrderedItemsInfo> mOrderedItemsInfos;
     private ListView mOrderedItemsListView;
     private View mOrderedItemsView;
+    @NonNull
     private BroadcastReceiver orderedItemsReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, @NonNull Intent intent) {
             if (intent.getAction().equals(Intents.ACTION_NEW_ORDERED_ITEM)) {
                 populateListItems();
             }
@@ -42,6 +44,7 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
         getActivity().registerReceiver(orderedItemsReceiver, new IntentFilter(Intents.ACTION_NEW_ORDERED_ITEM));
     }
 
+    @NonNull
     @Override
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_ordered_items);
@@ -99,7 +102,7 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
         }
     }
 
-    private void initChildViews(View orderedItemsView) {
+    private void initChildViews(@NonNull View orderedItemsView) {
 
         mOrderedItemsListView = (ListView) orderedItemsView.findViewById(R.id.fragment_ordered_items_listView_ordered_items);
         mOrderedItemsListView.setOnItemClickListener(this);

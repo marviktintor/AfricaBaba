@@ -1,6 +1,7 @@
 package com.origicheck.africababa.fragments.locations;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
     private View mLocationsView;
 
     private List<String> mLocations;
+    @Nullable
     private List<LocationsInfo> locationsInfos;
 
     private OnLocationClick onLocationClick;
@@ -33,6 +35,7 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
 
     }
 
+    @NonNull
     @Override
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_locations);
@@ -81,7 +84,7 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
         return R.layout.fragment_locations;
     }
 
-    private void initChildViews(View locationsView) {
+    private void initChildViews(@NonNull View locationsView) {
         mLocationsListView = (ListView) locationsView.findViewById(R.id.fragment_locations_listView_locations);
         mLocationsListView.setOnItemClickListener(this);
 

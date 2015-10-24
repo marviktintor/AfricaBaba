@@ -1,6 +1,7 @@
 package com.origicheck.africababa.fragments.products.tiles;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -128,7 +129,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
         populateProducts(mSearchProducts.getText().toString());
     }
 
-    private void initChildViews(View productView) {
+    private void initChildViews(@NonNull View productView) {
         mProductsGridView = (GridView) productView.findViewById(R.id.fragment_products_tiles_gridView_products);
         mProductsGridView.setOnItemClickListener(this);
 
@@ -164,7 +165,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
         return R.layout.list_products_tiles;
     }
 
-    private void populateProducts(String product) {
+    private void populateProducts(@NonNull String product) {
         mAdvancedProductsInfo = getUtils().getTransactionsManager().getAdvancedProductsInfo(product, getStoreId(), getProductGroup(), isShowQuickSaleProducts());
         mSimpleProductsInfos = getUtils().getViewCreator().getSimpleProductsInfo(mAdvancedProductsInfo);
         mProductsGridView.setAdapter(new ProductsAdapter(getActivity(), getProductsDisplayStyle(), mSimpleProductsInfos));

@@ -2,6 +2,7 @@ package com.origicheck.africababa.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -26,7 +27,7 @@ public class DialogConfigOrderedItem extends Dialog implements View.OnClickListe
     private Button mAddItems;
     private Button mRemoveItems;
 
-    public DialogConfigOrderedItem(Context context, int productId, String title, int itemsQuantity) {
+    public DialogConfigOrderedItem(@NonNull Context context, int productId, String title, int itemsQuantity) {
         super(context);
 
         utils = new Utils(context);
@@ -41,7 +42,7 @@ public class DialogConfigOrderedItem extends Dialog implements View.OnClickListe
         show();
     }
 
-    private void initDialogViews(View view) {
+    private void initDialogViews(@NonNull View view) {
 
         mExistingItems = (TextView) view.findViewById(R.id.dialog_ordered_items_textText_items);
         mEditItems = (EditText) view.findViewById(R.id.dialog_ordered_items_editText_items);

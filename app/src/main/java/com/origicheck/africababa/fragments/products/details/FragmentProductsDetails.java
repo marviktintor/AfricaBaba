@@ -1,6 +1,7 @@
 package com.origicheck.africababa.fragments.products.details;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -117,7 +118,7 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
         mSearchProducts.setText(getArguments().getString(Intents.EXTRA_PRODUCTS_SEARCH, ""));
     }
 
-    private void initChildViews(View productView) {
+    private void initChildViews(@NonNull View productView) {
         mProductsListView = (ListView) productView.findViewById(R.id.fragment_product_details_listView_products);
         mProductsListView.setOnItemClickListener(this);
 
@@ -135,7 +136,7 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
         return R.layout.list_products_details;
     }
 
-    private void populateProducts(String product) {
+    private void populateProducts(@NonNull String product) {
 
         mAdvancedProductsInfo = getUtils().getTransactionsManager().getAdvancedProductsInfo(product, getStoreId(), getProductGroup(), isShowQuickSaleProducts());
         mSimpleProductsInfos = getUtils().getViewCreator().getSimpleProductsInfo(mAdvancedProductsInfo);

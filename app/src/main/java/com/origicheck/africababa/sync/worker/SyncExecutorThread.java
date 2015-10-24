@@ -1,6 +1,8 @@
 package com.origicheck.africababa.sync.worker;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.origicheck.africababa.controller.utils.Utils;
@@ -27,15 +29,20 @@ public class SyncExecutorThread extends Thread {
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_QUERY = "query";
     public static final String ACTION_UPDATE = "update";
+
     // Intents:
     public static final String INTENT = "intent";
+
     // Clients
     public static final String CLIENT = "client";
     public static final String CLIENT_MOBILE_ANDROID = "android";
+
     // User
     public static final String USER_ID = "user_id";
+
     // Transaction host
     public static final String TRANSACTION_HOST = "transaction_host";
+
     // host
     public static final String TRANSACTION_HOST_BUYERS = "host_buyers";
     public static final String TRANSACTION_HOST_CATALOGUE = "host_catalogue";
@@ -52,7 +59,8 @@ public class SyncExecutorThread extends Thread {
     public static final String TRANSACTION_HOST_STORES = "host_stores";
     public static final String TRANSACTION_HOST_SUPPLIERS = "host_suppliers";
     public static final String TRANSACTION_HOST_USERS = "host_users";
-    // Query
+
+    // Query Intents
     public static final String INTENT_QUERY_BUYERS = "query_buyers";
     public static final String INTENT_QUERY_CATALOGUE = "query_catalogue";
     public static final String INTENT_QUERY_CATEGORY = "query_category";
@@ -69,6 +77,20 @@ public class SyncExecutorThread extends Thread {
     public static final String INTENT_QUERY_STORES = "query_stores";
     public static final String INTENT_QUERY_SUPPLIERS = "query_suppliers";
     public static final String INTENT_QUERY_USERS = "query_users";
+    public static final String INTENT_QUERY_USERS_LOGIN = "query_users_login";
+    public static final String INTENT_QUERY_USERS_SIGNUP = "query_users_signup";
+
+    //Params
+
+    //Authentication Params
+    public static final String POST_PARAM_FILEID = "fileid";
+    public static final String POST_PARAM_FULLNAME = "fullname";
+    public static final String POST_PARAM_EMAIL = "email";
+    public static final String POST_PARAM_PHONE = "phonenumber";
+    public static final String POST_PARAM_USERNAME = "username";
+    public static final String POST_PARAM_PASSWORD = "password";
+
+    @Nullable
     private FormData mFormData = null;
     private Utils utils;
     private Context context;
@@ -93,19 +115,20 @@ public class SyncExecutorThread extends Thread {
     @Override
     public void run() {
         super.run();
-        syncAll();
+        syncAll(false);
     }
 
     private int getUserId() {
         // TODO Auto-generated method stub
-        return 1;
+        return getUtils().getPrefsManager().getUserId();
     }
 
+    @Nullable
     public FormData getFormData() {
         return mFormData;
     }
 
-    public void serverSync(String transactionHost, String formData) throws Exception {
+    public void serverSync(@NonNull String transactionHost, @NonNull String commitIntent, @NonNull String formData) throws Exception {
         try {
             URL url = new URL("http://192.168.43.47/africababa/worker.php");
 
@@ -134,7 +157,7 @@ public class SyncExecutorThread extends Thread {
 
             Log.d("DATA_STREAM", stringBuffer.toString());
 
-            getUtils().getTransactionsManager().consumeSyncData(transactionHost, stringBuffer.toString());
+            getUtils().getTransactionsManager().consumeSyncData(transactionHost, commitIntent, stringBuffer.toString());
 
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
@@ -144,41 +167,45 @@ public class SyncExecutorThread extends Thread {
             // TODO Auto-generated catch block
             e.printStackTrace();
             printError("IOException -> " + e.getMessage());
+
         }
+
     }
 
-    private void sync(String action, String intent, String transactionHost,
-                      FormData formData) {
+    private void sync(String action, String commitIntent, String transactionHost,
+                      @NonNull FormData formData) {
         if (getFormData() == null) {
             printError("Form data is null");
-            return;
         }
-
+        Log.i("USER_ID", "" + getUserId());
         formData.appendFormData(USER_ID, "" + getUserId());
         formData.appendFormData(ACTION, action);
         formData.appendFormData(CLIENT, CLIENT_MOBILE_ANDROID);
-        formData.appendFormData(INTENT, intent);
+        formData.appendFormData(INTENT, commitIntent);
         formData.appendFormData(TRANSACTION_HOST, transactionHost);
 
         if (formData == null || formData.getFormDataBuilder().equals("")) {
             printError("Could not build Form data to send");
-            return;
+
         }
-        syncFormData(transactionHost, formData.getData());
+        syncFormData(transactionHost, commitIntent, formData.getData());
     }
 
-    private void syncFormData(final String transactionHost, final String formData) {
+
+    private void syncFormData(final String transactionHost, @NonNull final String commitIntent, @NonNull final String formData) {
         // TODO Auto-generated method stub
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    serverSync(transactionHost, formData);
+                    serverSync(transactionHost, commitIntent, formData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+
     }
 
     public void syncBuyers() {
@@ -342,8 +369,39 @@ public class SyncExecutorThread extends Thread {
         sync(action, intent, transactionHost, mFormData);
     }
 
-    public void syncAll() {
+    public void loginUser(String username, String password) {
+        String action = ACTION_QUERY;
+        String intent = INTENT_QUERY_USERS_LOGIN;
+        String transactionHost = TRANSACTION_HOST_USERS;
+        mFormData = new FormData();
+        mFormData.startBuildingFormData();
 
+        mFormData.appendFormData(POST_PARAM_USERNAME, username);
+        mFormData.appendFormData(POST_PARAM_PASSWORD, password);
+
+        sync(action, intent, transactionHost, mFormData);
+    }
+
+    public void signupUsers(String fullname, String email, String phonenumber,
+                            String username, String password) {
+        String action = ACTION_QUERY;
+        String intent = INTENT_QUERY_USERS_SIGNUP;
+        String transactionHost = TRANSACTION_HOST_USERS;
+        mFormData = new FormData();
+        mFormData.startBuildingFormData();
+
+        mFormData.appendFormData(POST_PARAM_FILEID, "" + getUtils().getPrefsManager().getDisplayAvatar());
+        mFormData.appendFormData(POST_PARAM_FULLNAME, fullname);
+        mFormData.appendFormData(POST_PARAM_EMAIL, email);
+        mFormData.appendFormData(POST_PARAM_PHONE, phonenumber);
+        mFormData.appendFormData(POST_PARAM_USERNAME, username);
+        mFormData.appendFormData(POST_PARAM_PASSWORD, password);
+
+        sync(action, intent, transactionHost, mFormData);
+
+    }
+
+    public void syncAll() {
         printData("Syncing Buyers");
         syncBuyers();
 
@@ -389,8 +447,17 @@ public class SyncExecutorThread extends Thread {
         printData("Syncing Suppliers");
         syncSuppliers();
 
-        printData("Syncing Users");
-        syncUsers();
+
+    }
+
+    public void syncAll(boolean syncUsers) {
+
+        if (syncUsers) {
+            printData("Syncing Users");
+            syncUsers();
+        }
+        syncAll();
+
     }
 
     private <T> void printError(String data) {

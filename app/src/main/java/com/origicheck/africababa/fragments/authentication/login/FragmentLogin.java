@@ -1,6 +1,7 @@
 package com.origicheck.africababa.fragments.authentication.login;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
 
     }
 
+    @Nullable
     @Override
     public String getActivityTitle() {
         return null;
@@ -100,7 +102,7 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
         }
     }
 
-    private void initChildViews(View loginView) {
+    private void initChildViews(@NonNull View loginView) {
         mIvAvatar = (CircleImageView) loginView.findViewById(R.id.fragment_login_imageView_user_avatar);
 
         mEtUsername = (EditText) loginView.findViewById(R.id.fragment_login_editText_username);
@@ -120,7 +122,14 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
     }
 
     private void loginUser() {
+        if (!getUtils().isEmpty(new EditText[]{mEtUsername, mEtPassword})) {
 
+            String username = getUtils().getString(mEtUsername);
+            String password = getUtils().getString(mEtPassword);
+
+            getSyncExecutorThread().loginUser(username, password);
+
+        }
     }
 
     public interface OnClickSignup {

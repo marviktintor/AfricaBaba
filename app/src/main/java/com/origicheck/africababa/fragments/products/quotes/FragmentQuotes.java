@@ -2,6 +2,7 @@ package com.origicheck.africababa.fragments.products.quotes;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,6 +42,7 @@ public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnIte
 
     }
 
+    @NonNull
     @Override
     public String getActivityTitle() {
         return getResources().getString(R.string.title_fragment_quotes);
@@ -101,7 +103,7 @@ public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnIte
         }
     }
 
-    private void initChildViews(View quotesView) {
+    private void initChildViews(@NonNull View quotesView) {
         mSearch = (EditText) quotesView.findViewById(R.id.fragment_quotes_editText_search_quote);
         mCreateQuote = (ImageView) quotesView.findViewById(R.id.fragment_quotes_imageView_create_quote);
         mProductQuotes = (ListView) quotesView.findViewById(R.id.fragment_quotes_listView_quotes);

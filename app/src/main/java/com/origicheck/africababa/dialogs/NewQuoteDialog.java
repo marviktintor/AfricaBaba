@@ -2,6 +2,7 @@ package com.origicheck.africababa.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +24,7 @@ public class NewQuoteDialog extends Dialog implements View.OnClickListener {
     private Button mAddQuote;
     private Button mClearQuote;
 
-    public NewQuoteDialog(Context context) {
+    public NewQuoteDialog(@NonNull Context context) {
         super(context);
         utils = new Utils(context);
         mNewQuoteView = getLayoutInflater().inflate(R.layout.dialog_quote_items, null, false);
@@ -44,7 +45,7 @@ public class NewQuoteDialog extends Dialog implements View.OnClickListener {
         }
     }
 
-    private void initDialogViews(View mNewQuoteView) {
+    private void initDialogViews(@NonNull View mNewQuoteView) {
         mProductName = (EditText) mNewQuoteView.findViewById(R.id.dialog_quote_items_editText_product_name);
         mProductDescription = (EditText) mNewQuoteView.findViewById(R.id.dialog_quote_items_editText_product_description);
         mProductQuantity = (EditText) mNewQuoteView.findViewById(R.id.dialog_quote_items_editText_product_quantity);

@@ -3,6 +3,7 @@ package com.origicheck.africababa.controller.prefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 /**
  * Created by victor on 10/10/2015.
@@ -15,12 +16,13 @@ public class AppPrefs {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private AppPrefs(Context context) {
+    private AppPrefs(@NonNull Context context) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         editor = sharedPreferences.edit();
     }
 
-    public static AppPrefs getInstance(Context context) {
+    @NonNull
+    public static AppPrefs getInstance(@NonNull Context context) {
         return new AppPrefs(context);
     }
 

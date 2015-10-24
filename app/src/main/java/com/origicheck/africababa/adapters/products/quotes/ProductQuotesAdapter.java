@@ -1,6 +1,7 @@
 package com.origicheck.africababa.adapters.products.quotes;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,13 +77,13 @@ public class ProductQuotesAdapter extends BaseAdapter {
 
         private TextView mProduct, mQuantity, mDescription;
 
-        Holder(View view) {
+        Holder(@NonNull View view) {
             mProduct = (TextView) view.findViewById(R.id.list_quotes_textView_product_name);
             mQuantity = (TextView) view.findViewById(R.id.list_quotes_textView_product_quantity);
             mDescription = (TextView) view.findViewById(R.id.list_quotes_textView_product_description);
         }
 
-        public void createView(ProductQuotesInfo productQuotesInfo) {
+        public void createView(@NonNull ProductQuotesInfo productQuotesInfo) {
             mProduct.setText(productQuotesInfo.getProductName());
             mQuantity.setText("#" + productQuotesInfo.getProductQuantity());
             mDescription.setText(productQuotesInfo.getProductDescription());

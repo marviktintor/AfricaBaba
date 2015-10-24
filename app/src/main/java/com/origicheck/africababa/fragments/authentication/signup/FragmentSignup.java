@@ -1,6 +1,7 @@
 package com.origicheck.africababa.fragments.authentication.signup;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,7 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
 
     private Bundle arguments;
 
-    private OnClickLogin onClickLogin;
+    private OnSignupCallbacks onSignupCallbacks;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
 
     @Override
     public void onAttachFragment() {
-        onClickLogin = (OnClickLogin) getActivity();
+        onSignupCallbacks = (OnSignupCallbacks) getActivity();
     }
 
     @Override
@@ -100,15 +101,10 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == mBtLogin) {loginUser();}
+        if (v == mBtSignup) {signupUser();}
     }
 
-    private void loginUser() {
-        String username = getUtils().getString(mEtUsername);
-        String password = getUtils().getString(mEtPassword);
-        onClickLogin.onClickLoginButton(null, username, password);
-    }
-
-    private void initChildViews(View signupView) {
+    private void initChildViews(@NonNull View signupView) {
         mIvAvatar = (CircleImageView) signupView.findViewById(R.id.fragment_signup_imageView_user_avatar);
 
         mEtFullname = (EditText) signupView.findViewById(R.id.fragment_signup_editText_fullname);
@@ -118,6 +114,13 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
         mEtUsername = (EditText) signupView.findViewById(R.id.fragment_signup_editText_username);
         mEtPassword = (EditText) signupView.findViewById(R.id.fragment_signup_editText_password);
 
+        mEtFullname.setText("Marvik Tintor");
+        mEtEmail.setText("marviktintor@gmail.com");
+        mEtPhone.setText("0718034449");
+        mEtUsername.setText("marviktintor");
+        mEtPassword.setText("marviktintor");
+
+
         mBtSignup = (Button) signupView.findViewById(R.id.fragment_signup_button_signup);
         mBtLogin = (Button) signupView.findViewById(R.id.fragment_signup_button_login);
 
@@ -125,8 +128,34 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
         mBtLogin.setOnClickListener(this);
     }
 
-    public interface OnClickLogin {
-        void onClickLoginButton(String userAvatar, String username, String password);
+    private void loginUser() {
+        String username = getUtils().getString(mEtUsername);
+        String password = getUtils().getString(mEtPassword);
+        onSignupCallbacks.onClickLoginButton(null, username, password);
     }
+
+    private void signupUser() {
+
+        getUtils().getPrefsManager().clearPreferences();
+
+        if (!getUtils().isEmpty(new EditText[]{mEtFullname, mEtEmail, mEtPhone, mEtUsername, mEtPassword})) {
+
+            String fullname = getUtils().getString(mEtFullname);
+            String email = getUtils().getString(mEtEmail);
+            String phonenumber = getUtils().getString(mEtPhone);
+            String username = getUtils().getString(mEtUsername);
+            String password = getUtils().getString(mEtPassword);
+
+            getSyncExecutorThread().signupUsers(fullname, email, phonenumber, username, password);
+
+        }
+    }
+
+    public interface OnSignupCallbacks {
+        void onClickLoginButton(String userAvatar, String username, String password);
+
+        void onSignup();
+    }
+
 
 }

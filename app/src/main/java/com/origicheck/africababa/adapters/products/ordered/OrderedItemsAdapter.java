@@ -3,6 +3,7 @@ package com.origicheck.africababa.adapters.products.ordered;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,7 @@ public class OrderedItemsAdapter extends BaseAdapter {
         private TextView mItemPrice;
         private TextView mItemQuantity;
 
-        Holder(View view) {
+        Holder(@NonNull View view) {
             mItemAvatar = (ImageView) view.findViewById(R.id.list_ordered_items_imageView_item_avatar);
             mItemName = (TextView) view.findViewById(R.id.list_ordered_items_textView_item_name);
             mItemPrice = (TextView) view.findViewById(R.id.list_ordered_items_textView_item_price);

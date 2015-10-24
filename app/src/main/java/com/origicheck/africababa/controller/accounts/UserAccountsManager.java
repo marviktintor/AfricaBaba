@@ -48,7 +48,7 @@ public class UserAccountsManager {
     }
 
     public boolean isExistsUserAccount() {
-        return isAccountExists(getContext().getResources().getString(R.string.app_name));
+        return isAccountExists(getContext().getResources().getString(R.string.account_type));
     }
 
     private void forceSync(Account account) {

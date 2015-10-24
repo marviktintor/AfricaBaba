@@ -1,6 +1,7 @@
 package com.origicheck.africababa.adapters.dashboard;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +86,7 @@ public class DashboardAdapter extends BaseAdapter {
         private TextView mItemTitle;
         private TextView mItemDescription;
 
-        Holder(View view) {
+        Holder(@NonNull View view) {
             mItemTitle = (TextView) view.findViewById(R.id.list_dashboard_items_textView_navigation_item_title);
             mItemDescription = (TextView) view.findViewById(R.id.list_dashboard_items_textView_navigation_item_description);
         }

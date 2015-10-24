@@ -59,6 +59,10 @@ public class PrefKey {
 
     public static final String SUPPLIER_ID = "supplierId";
 
+    public static final String DISPLAY_AVATAR = "displayAvatar";
+
+    public static final int DISPLAY_AVATAR_NONE = -1;
+
     public static final String DISPLAY_NAME = "displayName";
 
     public static final String CONTACT_EMAIL = "contactEmail";

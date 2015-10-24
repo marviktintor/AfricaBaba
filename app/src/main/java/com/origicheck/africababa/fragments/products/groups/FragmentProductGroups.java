@@ -1,6 +1,7 @@
 package com.origicheck.africababa.fragments.products.groups;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
 
     }
 
+    @NonNull
     @Override
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_product_groups);
@@ -92,7 +94,7 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
         this.productCategory = productCategory;
     }
 
-    private void initChildViews(View productGroupsView) {
+    private void initChildViews(@NonNull View productGroupsView) {
         mProductsGroupListView = (ListView) productGroupsView.findViewById(R.id.fragment_product_groups_listView_groups);
         mProductsGroupListView.setOnItemClickListener(this);
     }
