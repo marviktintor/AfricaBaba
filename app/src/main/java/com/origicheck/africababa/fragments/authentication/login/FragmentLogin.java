@@ -108,6 +108,9 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
         mEtUsername = (EditText) loginView.findViewById(R.id.fragment_login_editText_username);
         mEtPassword = (EditText) loginView.findViewById(R.id.fragment_login_editText_password);
 
+        mEtUsername.setText("marviktintor");
+        mEtPassword.setText("marviktintor");
+
         mBtLogin = (Button) loginView.findViewById(R.id.fragment_login_button_login);
         mBtSignup = (Button) loginView.findViewById(R.id.fragment_login_button_signup);
 

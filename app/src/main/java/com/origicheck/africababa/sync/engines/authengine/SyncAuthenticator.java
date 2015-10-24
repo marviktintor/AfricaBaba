@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.origicheck.africababa.activities.ActivityMain;
+import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.controller.utils.Utils;
 
 /**
@@ -32,7 +33,8 @@ public class SyncAuthenticator extends AbstractAccountAuthenticator {
     @Nullable
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
-        getUtils().startActivity(ActivityMain.class, Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        getUtils().startActivity(Intents.ACTION_AUTHENTICATE, ActivityMain.class, Intent.FLAG_ACTIVITY_NEW_TASK);
         return null;
     }
 

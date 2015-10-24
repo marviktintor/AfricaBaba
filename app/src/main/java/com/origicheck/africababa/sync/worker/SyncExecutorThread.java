@@ -115,7 +115,7 @@ public class SyncExecutorThread extends Thread {
     @Override
     public void run() {
         super.run();
-        syncAll(false);
+        if (getUtils().isNetworkConnected(true)) syncAll(false);
     }
 
     private int getUserId() {
