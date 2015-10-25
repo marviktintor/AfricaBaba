@@ -378,6 +378,16 @@ public class PrefsManager implements IPreferences {
         commit(PrefKey.DISPLAY_AVATAR, displayAvatar);
     }
 
+    @Override
+    public String getProfilePicUri() {
+        return read(PrefKey.LOCAL_AVATAR, String.class, null);
+    }
+
+    @Override
+    public void setProfilePicUri(String profilePicUri) {
+        commit(PrefKey.LOCAL_AVATAR, profilePicUri);
+    }
+
     @Nullable
     @Override
     public String getContactEmail() {
@@ -412,4 +422,6 @@ public class PrefsManager implements IPreferences {
     }
 
     public void clearPreferences() { getEditor().clear().commit();}
+
+
 }

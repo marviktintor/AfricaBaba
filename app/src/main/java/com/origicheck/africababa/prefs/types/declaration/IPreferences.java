@@ -185,6 +185,12 @@ public interface IPreferences extends AfricaBabaPreferences, AuthenticationSetti
     void setDisplayAvatar(int displayAvatar);
 
     @Override
+    String getProfilePicUri();
+
+    @Override
+    void setProfilePicUri(String profilePicUri);
+
+    @Override
     String getContactEmail();
 
     @Override

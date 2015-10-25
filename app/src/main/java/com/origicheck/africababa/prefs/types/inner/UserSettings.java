@@ -30,6 +30,10 @@ public interface UserSettings {
 
     void setDisplayAvatar(int displayAvatar);
 
+    String getProfilePicUri();
+
+    void setProfilePicUri(String profilePicUri);
+
     String getContactEmail();
 
     void setContactEmail(String contactEmail);

@@ -106,6 +106,7 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
 
     private void initChildViews(@NonNull View signupView) {
         mIvAvatar = (CircleImageView) signupView.findViewById(R.id.fragment_signup_imageView_user_avatar);
+        setUserAvatar();
 
         mEtFullname = (EditText) signupView.findViewById(R.id.fragment_signup_editText_fullname);
         mEtEmail = (EditText) signupView.findViewById(R.id.fragment_signup_editText_email);
@@ -128,6 +129,14 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
         mBtLogin.setOnClickListener(this);
     }
 
+    private void setUserAvatar() {
+        try {
+            mIvAvatar.setImageDrawable(getUtils().getUserAvatar());
+        } catch (Exception e) {
+            e.printStackTrace();
+            getUtils().toast(e.toString());
+        }
+    }
     private void loginUser() {
         String username = getUtils().getString(mEtUsername);
         String password = getUtils().getString(mEtPassword);

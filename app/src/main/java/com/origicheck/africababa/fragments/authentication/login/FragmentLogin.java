@@ -104,6 +104,7 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
 
     private void initChildViews(@NonNull View loginView) {
         mIvAvatar = (CircleImageView) loginView.findViewById(R.id.fragment_login_imageView_user_avatar);
+        setUserAvatar();
 
         mEtUsername = (EditText) loginView.findViewById(R.id.fragment_login_editText_username);
         mEtPassword = (EditText) loginView.findViewById(R.id.fragment_login_editText_password);
@@ -135,6 +136,14 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
         }
     }
 
+    private void setUserAvatar() {
+        try {
+            mIvAvatar.setImageDrawable(getUtils().getUserAvatar());
+        } catch (Exception e) {
+            e.printStackTrace();
+            getUtils().toast(e.toString());
+        }
+    }
     public interface OnClickSignup {
         void onClickSignupButton(String userAvatar, String username, String password);
     }
