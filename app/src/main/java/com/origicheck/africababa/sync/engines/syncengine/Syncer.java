@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 
+import com.origicheck.africababa.controller.utils.Utils;
 import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 /**
@@ -18,7 +19,7 @@ public class Syncer extends AbstractThreadedSyncAdapter {
 
     public Syncer(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        syncExecutorThread = new SyncExecutorThread(context);
+        syncExecutorThread = new SyncExecutorThread(context, new Utils(getContext()));
     }
 
     @Override

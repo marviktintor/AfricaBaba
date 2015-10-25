@@ -60,6 +60,26 @@ public class SyncExecutorThread extends Thread {
     public static final String TRANSACTION_HOST_SUPPLIERS = "host_suppliers";
     public static final String TRANSACTION_HOST_USERS = "host_users";
 
+    // Insert Intents
+    public static final String INTENT_INSERT_BUYERS = "insert_buyers";
+    public static final String INTENT_INSERT_CATALOGUE = "insert_catalogue";
+    public static final String INTENT_INSERT_CATEGORY = "insert_category";
+    public static final String INTENT_INSERT_CERTIFICATES = "insert_certificates";
+    public static final String INTENT_INSERT_FILES = "insert_files";
+    public static final String INTENT_INSERT_GROUPS = "insert_groups";
+    public static final String INTENT_INSERT_LOCATIONS = "insert_locations";
+    public static final String INTENT_INSERT_MESSAGES = "insert_messages";
+    public static final String INTENT_INSERT_ORDERS_SENT = "insert_orders_sent";
+    public static final String INTENT_INSERT_ORDERS_RECEIVED = "insert_orders_received";
+    public static final String INTENT_INSERT_PRODUCTS = "insert_products";
+    public static final String INTENT_INSERT_QUICK_SALE = "insert_quick_sale";
+    public static final String INTENT_INSERT_QUOTES = "insert_quotes";
+    public static final String INTENT_INSERT_STORES = "insert_stores";
+    public static final String INTENT_INSERT_SUPPLIERS = "insert_suppliers";
+    public static final String INTENT_INSERT_USERS = "insert_users";
+    public static final String INTENT_INSERT_USERS_LOGIN = "insert_users_login";
+    public static final String INTENT_INSERT_USERS_SIGNUP = "insert_users_signup";
+
     // Query Intents
     public static final String INTENT_QUERY_BUYERS = "query_buyers";
     public static final String INTENT_QUERY_CATALOGUE = "query_catalogue";
@@ -80,6 +100,26 @@ public class SyncExecutorThread extends Thread {
     public static final String INTENT_QUERY_USERS_LOGIN = "query_users_login";
     public static final String INTENT_QUERY_USERS_SIGNUP = "query_users_signup";
 
+    // Update Intents
+    public static final String INTENT_UPDATE_BUYERS = "update_buyers";
+    public static final String INTENT_UPDATE_CATALOGUE = "update_catalogue";
+    public static final String INTENT_UPDATE_CATEGORY = "update_category";
+    public static final String INTENT_UPDATE_CERTIFICATES = "update_certificates";
+    public static final String INTENT_UPDATE_FILES = "update_files";
+    public static final String INTENT_UPDATE_GROUPS = "update_groups";
+    public static final String INTENT_UPDATE_LOCATIONS = "update_locations";
+    public static final String INTENT_UPDATE_MESSAGES = "update_messages";
+    public static final String INTENT_UPDATE_ORDERS_SENT = "update_orders_sent";
+    public static final String INTENT_UPDATE_ORDERS_RECEIVED = "update_orders_received";
+    public static final String INTENT_UPDATE_PRODUCTS = "update_products";
+    public static final String INTENT_UPDATE_QUICK_SALE = "update_quick_sale";
+    public static final String INTENT_UPDATE_QUOTES = "update_quotes";
+    public static final String INTENT_UPDATE_STORES = "update_stores";
+    public static final String INTENT_UPDATE_SUPPLIERS = "update_suppliers";
+    public static final String INTENT_UPDATE_USERS = "update_users";
+    public static final String INTENT_UPDATE_USERS_LOGIN = "update_users_login";
+    public static final String INTENT_UPDATE_USERS_SIGNUP = "update_users_signup";
+
     //Params
 
     //Authentication Params
@@ -89,23 +129,30 @@ public class SyncExecutorThread extends Thread {
     public static final String POST_PARAM_PHONE = "phonenumber";
     public static final String POST_PARAM_USERNAME = "username";
     public static final String POST_PARAM_PASSWORD = "password";
-
+    public static final String POST_ORDERS_PARAM_ORDER_ID = "orderId";
+    public static final String POST_ORDERS_PARAM_PRODUCT_ID = "productId";
+    public static final String POST_ORDERS_PARAM_SUPPLIER_ID = "supplierId";
+    public static final String POST_ORDERS_PARAM_BUYER_ID = "buyerId";
+    public static final String POST_ORDERS_PARAM_QUANTITY = "quantity";
+    public static final String POST_ORDERS_PARAM_PRICE = "price";
+    public static final String POST_ORDERS_PARAM_TIMESTAMP = "timestamp";
+    public static final String POST_QUOTES_PARAM_QUOTE_ID = "quoteId";
+    public static final String POST_QUOTES_PARAM_PRODUCT_NAME = "productName";
+    public static final String POST_QUOTES_PARAM_PRODUCT_DESCRIPTION = "productDescription";
+    public static final String POST_QUOTES_PARAM_PRODUCT_QUANTITY = "productQuantity";
+    public static final String POST_QUOTES_PARAM_TIMESTAMP = "timestamp";
     @Nullable
     private FormData mFormData = null;
     private Utils utils;
     private Context context;
 
-    public SyncExecutorThread(Context context) {
+    public SyncExecutorThread(Context context, Utils utils) {
         this.context = context;
-        initAll();
+        this.utils = utils;
     }
 
     public Context getContext() {
         return context;
-    }
-
-    void initAll() {
-        utils = new Utils(getContext());
     }
 
     public Utils getUtils() {
@@ -190,7 +237,6 @@ public class SyncExecutorThread extends Thread {
         }
         syncFormData(transactionHost, commitIntent, formData.getData());
     }
-
 
     private void syncFormData(final String transactionHost, @NonNull final String commitIntent, @NonNull final String formData) {
         // TODO Auto-generated method stub
@@ -470,4 +516,49 @@ public class SyncExecutorThread extends Thread {
         Log.d("SYNC_EXECUTOR", data);
     }
 
+    public void serverSyncUpdateOrders(int orderId, int productId, int supplierId, int buyerId, int quantity, float price, String timestamp) {
+        serverSyncOrders(ACTION_UPDATE, INTENT_UPDATE_ORDERS_SENT, orderId, productId, supplierId, buyerId, quantity, price, timestamp);
+    }
+
+    public void serverSyncInsertOrders(int orderId, int productId, int supplierId, int buyerId, int quantity, float price, String timestamp) {
+        serverSyncOrders(ACTION_INSERT, INTENT_UPDATE_ORDERS_SENT, orderId, productId, supplierId, buyerId, quantity, price, timestamp);
+    }
+
+    public void serverSyncOrders(String action, String intent, int orderId, int productId, int supplierId, int buyerId, int quantity, float price, String timestamp) {
+        String transactionHost = TRANSACTION_HOST_ORDERS;
+        mFormData = new FormData();
+        mFormData.startBuildingFormData();
+
+
+        mFormData.appendFormData(POST_ORDERS_PARAM_ORDER_ID, "" + orderId);
+        mFormData.appendFormData(POST_ORDERS_PARAM_PRODUCT_ID, "" + productId);
+        mFormData.appendFormData(POST_ORDERS_PARAM_SUPPLIER_ID, "" + supplierId);
+        mFormData.appendFormData(POST_ORDERS_PARAM_BUYER_ID, "" + buyerId);
+        mFormData.appendFormData(POST_ORDERS_PARAM_QUANTITY, "" + quantity);
+        mFormData.appendFormData(POST_ORDERS_PARAM_PRICE, "" + price);
+        mFormData.appendFormData(POST_ORDERS_PARAM_TIMESTAMP, timestamp);
+
+        sync(action, intent, transactionHost, mFormData);
+    }
+
+    public void serverSyncInsertQuotes(int quoteId, String productName, String productDescription, String productQuantity, String timestamp) {
+        serverSyncQuotes(ACTION_INSERT, INTENT_INSERT_QUOTES, quoteId, productName, productDescription, productQuantity, timestamp);
+    }
+
+    public void serverSyncUpdateQuotes(int quoteId, String productName, String productDescription, String productQuantity, String timestamp) {
+        serverSyncQuotes(ACTION_UPDATE, INTENT_UPDATE_QUOTES, quoteId, productName, productDescription, productQuantity, timestamp);
+    }
+
+    public void serverSyncQuotes(String action, String intent, int quoteId, String productName, String productDescription, String productQuantity, String timestamp) {
+        String transactionHost = TRANSACTION_HOST_QUOTES;
+        mFormData = new FormData();
+        mFormData.startBuildingFormData();
+        mFormData.appendFormData(POST_QUOTES_PARAM_QUOTE_ID, "" + quoteId);
+        mFormData.appendFormData(POST_QUOTES_PARAM_PRODUCT_NAME, productName);
+        mFormData.appendFormData(POST_QUOTES_PARAM_PRODUCT_DESCRIPTION, productDescription);
+        mFormData.appendFormData(POST_QUOTES_PARAM_PRODUCT_QUANTITY, productQuantity);
+        mFormData.appendFormData(POST_QUOTES_PARAM_TIMESTAMP, timestamp);
+
+        sync(action, intent, transactionHost, mFormData);
+    }
 }
