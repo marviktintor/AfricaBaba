@@ -1,5 +1,9 @@
 package com.origicheck.africababa.fragments.products.details;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +23,7 @@ import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.advanced.AdvancedProductsInfo;
 import com.origicheck.africababa.datamodels.products.simple.SimpleProductsInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 
@@ -42,9 +47,11 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
 
     private boolean showQuickSaleProducts = false;
     private String activityTitle;
+    private Receiver receiver;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
+        receiver = new Receiver();
     }
 
     @Override
@@ -61,7 +68,6 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
 
     }
 
-
     @Override
     public void onAttachFragment() {
         onProductToggleViewClick = (OnProductDetailsToggleViewClick) getActivity();
@@ -69,9 +75,34 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
 
     @Override
     public void onResumeFragment() {
+
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCTS));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCT_GROUPS));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_CATEGORY));
+
         populateProducts(mSearchProducts.getText().toString());
     }
 
+    @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.syncLocations();
+                syncExecutor.syncStores();
+                syncExecutor.syncCategory();
+                syncExecutor.syncGroups();
+                syncExecutor.syncProducts();
+                syncExecutor.syncQuickSales();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+        populateProducts(mSearchProducts.getText().toString());
+    }
 
     @Override
     public void onPauseFragment() {
@@ -80,7 +111,7 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
 
     @Override
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -131,7 +162,6 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
 
     }
 
-
     private int getProductsDisplayStyle() {
         return R.layout.list_products_details;
     }
@@ -142,7 +172,6 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
         mSimpleProductsInfos = getUtils().getViewCreator().getSimpleProductsInfo(mAdvancedProductsInfo);
         mProductsListView.setAdapter(new ProductsAdapter(getActivity(), getProductsDisplayStyle(), mSimpleProductsInfos));
     }
-
 
     @Override
     public void onClick(View v) {
@@ -158,6 +187,7 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
             getUtils().showOrderedItemsDialog(productId);
         }
     }
+
     public void setStoreId() {
         if (getArguments() != null) {
             storeId = getArguments().getInt(Intents.EXTRA_STORE, -1);
@@ -216,5 +246,16 @@ public class FragmentProductsDetails extends FragmentWrapper implements View.OnC
 
     public interface OnProductDetailsToggleViewClick {
         void onProductDetailsToggleViewClick(Bundle extras);
+    }
+
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCTS)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCT_GROUPS)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_CATEGORY)) {
+                onPerformPartialSync();
+            }
+        }
     }
 }

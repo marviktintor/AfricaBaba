@@ -1,5 +1,9 @@
 package com.origicheck.africababa.fragments.products.groups;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +18,7 @@ import com.origicheck.africababa.R;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.groups.ProductGroupsInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 
@@ -30,10 +35,12 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
 
     private OnProductGroupClick onProductGroupClick;
     private int productCategory = -1;
+    private Receiver receiver;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-
+        receiver = new Receiver();
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCT_GROUPS));
     }
 
     @NonNull
@@ -41,6 +48,7 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_product_groups);
     }
+
     @Override
     public void receiveBundle() {
         setProductCategory(getArguments().getInt(Intents.EXTRA_PRODUCT_CATEGORY, -1));
@@ -60,7 +68,6 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
         populateProductGroups();
     }
 
-
     @Override
     public void onAttachFragment() {
         onProductGroupClick = (OnProductGroupClick) getActivity();
@@ -72,13 +79,30 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
     }
 
     @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.syncCategory();
+                syncExecutor.syncGroups();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+        populateProductGroups();
+    }
+
+    @Override
     public void onPauseFragment() {
 
     }
 
     @Override
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -117,5 +141,15 @@ public class FragmentProductGroups extends FragmentWrapper implements AdapterVie
 
     public interface OnProductGroupClick {
         void onProductGroupClick(int productGroup);
+    }
+
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCT_GROUPS)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_CATEGORY)) {
+                onPerformPartialSync();
+            }
+        }
     }
 }

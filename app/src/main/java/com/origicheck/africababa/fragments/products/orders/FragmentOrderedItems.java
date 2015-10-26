@@ -18,6 +18,7 @@ import com.origicheck.africababa.adapters.products.ordered.OrderedItemsAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.orders.OrderedItemsInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 
@@ -29,19 +30,13 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
     private List<OrderedItemsInfo> mOrderedItemsInfos;
     private ListView mOrderedItemsListView;
     private View mOrderedItemsView;
-    @NonNull
-    private BroadcastReceiver orderedItemsReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, @NonNull Intent intent) {
-            if (intent.getAction().equals(Intents.ACTION_NEW_ORDERED_ITEM)) {
-                populateListItems();
-            }
-        }
-    };
+    private Receiver receiver;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-        getActivity().registerReceiver(orderedItemsReceiver, new IntentFilter(Intents.ACTION_NEW_ORDERED_ITEM));
+        receiver = new Receiver();
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_NEW_ORDERED_ITEM));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_ORDERS));
     }
 
     @NonNull
@@ -79,6 +74,24 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
     }
 
     @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.syncProducts();
+                syncExecutor.syncOrdrersSent();
+                syncExecutor.syncOrdrersReceived();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+        populateOrderedItems();
+    }
+
+    @Override
     public void onPauseFragment() {
 
     }
@@ -86,7 +99,7 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
     @Override
 
     public void onDestroyFragment() {
-        getActivity().unregisterReceiver(orderedItemsReceiver);
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -107,10 +120,10 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
         mOrderedItemsListView = (ListView) orderedItemsView.findViewById(R.id.fragment_ordered_items_listView_ordered_items);
         mOrderedItemsListView.setOnItemClickListener(this);
 
-        populateListItems();
+        populateOrderedItems();
     }
 
-    private void populateListItems() {
+    private void populateOrderedItems() {
         mOrderedItemsInfos = getUtils().getTransactionsManager().getOrderedItemsList();
         mOrderedItemsListView.setAdapter(new OrderedItemsAdapter(getActivity(), R.layout.list_ordered_items, mOrderedItemsInfos));
     }
@@ -118,5 +131,19 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
     private void showOrderedItemsDialog(int productId) {
         getUtils().showOrderedItemsDialog(productId);
 
+    }
+
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, @NonNull Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_NEW_ORDERED_ITEM)) {
+                populateOrderedItems();
+            }
+            if (intent.getAction().equals(Intents.ACTION_SYNCED_ORDERS)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_SUPPLIERS)
+                    ) {
+                populateOrderedItems();
+            }
+        }
     }
 }

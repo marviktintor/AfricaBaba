@@ -1,5 +1,9 @@
 package com.origicheck.africababa.fragments.products.tiles;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +23,7 @@ import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.advanced.AdvancedProductsInfo;
 import com.origicheck.africababa.datamodels.products.simple.SimpleProductsInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 
@@ -43,10 +48,12 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
     private boolean showQuickSaleProducts = false;
 
     private String activityTitle;
+    private Receiver receiver;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
         setStoreId();
+        receiver = new Receiver();
     }
 
     @Override
@@ -92,7 +99,6 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
         mSearchProducts.setText(getArguments().getString(Intents.EXTRA_PRODUCTS_SEARCH, ""));
     }
 
-
     @Override
     public void onAttachFragment() {
         onProductToggleViewClick = (OnProductTilesToggleViewClick) getActivity();
@@ -100,9 +106,34 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
     @Override
     public void onResumeFragment() {
+
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCTS));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCT_GROUPS));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_CATEGORY));
+
         populateProducts(mSearchProducts.getText().toString());
     }
 
+    @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.syncLocations();
+                syncExecutor.syncStores();
+                syncExecutor.syncCategory();
+                syncExecutor.syncGroups();
+                syncExecutor.syncProducts();
+                syncExecutor.syncQuickSales();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+        populateProducts(mSearchProducts.getText().toString());
+    }
 
     @Override
     public void onPauseFragment() {
@@ -111,7 +142,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
 
     @Override
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -212,8 +243,18 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
         onProductToggleViewClick.onProductTilesToggleViewClick(args);
     }
 
-
     public interface OnProductTilesToggleViewClick {
         void onProductTilesToggleViewClick(Bundle extras);
+    }
+
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCTS)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCT_GROUPS)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_CATEGORY)) {
+                onPerformPartialSync();
+            }
+        }
     }
 }

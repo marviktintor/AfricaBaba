@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.origicheck.africababa.R;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 import com.origicheck.africababa.views.circleimageview.CircleImageView;
 
 /**
@@ -84,6 +85,23 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
     }
 
     @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+               /* THIS IS CALLED AUTOMATICALLY WHEN SIGN UP SUCCESSFUL
+               syncExecutor.start();*/
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+
+    }
+
+    @Override
     public void onPauseFragment() {
 
     }
@@ -134,7 +152,6 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
             mIvAvatar.setImageDrawable(getUtils().getUserAvatar());
         } catch (Exception e) {
             e.printStackTrace();
-            getUtils().toast(e.toString());
         }
     }
     private void loginUser() {

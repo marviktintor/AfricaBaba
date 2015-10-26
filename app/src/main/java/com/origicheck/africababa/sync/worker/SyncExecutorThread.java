@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.origicheck.africababa.controller.utils.Utils;
+import com.origicheck.africababa.prefs.types.keys.PrefKey;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -177,7 +178,8 @@ public class SyncExecutorThread extends Thread {
 
     public void serverSync(@NonNull String transactionHost, @NonNull String commitIntent, @NonNull String formData) throws Exception {
         try {
-            URL url = new URL("http://192.168.43.47/africababa/worker.php");
+
+            URL url = new URL(PrefKey.SERVER_URL + "/worker.php");
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("POST");

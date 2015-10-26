@@ -1,5 +1,9 @@
 package com.origicheck.africababa.fragments.stores;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +18,7 @@ import com.origicheck.africababa.R;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.stores.StoresInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 
@@ -29,19 +34,18 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
     private List<String> stores;
 
     private OnClickStore onClickStore;
+    private Receiver receiver;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-
+        receiver = new Receiver();
     }
-
 
     @NonNull
     @Override
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_stores);
     }
-
 
     @Override
     public void receiveBundle() {
@@ -62,7 +66,6 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
 
     }
 
-
     @Override
     public void onAttachFragment() {
         onClickStore = (OnClickStore) getActivity();
@@ -70,7 +73,25 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
 
     @Override
     public void onResumeFragment() {
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_STORES));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_LOCATIONS));
+    }
 
+    @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.syncLocations();
+                syncExecutor.syncStores();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+        populateStores();
     }
 
     @Override
@@ -80,7 +101,7 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
 
     @Override
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -111,5 +132,15 @@ public class FragmentStores extends FragmentWrapper implements AdapterView.OnIte
 
     public interface OnClickStore {
         void onClickStore(int storeId);
+    }
+
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_SYNCED_STORES)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_LOCATIONS)) {
+                onPerformPartialSync();
+            }
+        }
     }
 }

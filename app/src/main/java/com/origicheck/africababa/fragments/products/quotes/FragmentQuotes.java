@@ -1,6 +1,10 @@
 package com.origicheck.africababa.fragments.products.quotes;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,8 +21,10 @@ import android.widget.ListView;
 import com.origicheck.africababa.R;
 import com.origicheck.africababa.adapters.products.quotes.ProductQuotesAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
+import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.quotes.ProductQuotesInfo;
 import com.origicheck.africababa.dialogs.NewQuoteDialog;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 
@@ -35,11 +41,11 @@ public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnIte
     private ListView mProductQuotes;
 
     private NewQuoteDialog mNewQuoteDialog;
-
+    private Receiver receiver;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-
+        receiver = new Receiver();
     }
 
     @NonNull
@@ -73,7 +79,27 @@ public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnIte
 
     @Override
     public void onResumeFragment() {
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_QUOTES));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCTS));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCT_GROUPS));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_CATEGORY));
+    }
 
+    @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.syncProducts();
+                syncExecutor.syncQuotes();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+        populateQuotes();
     }
 
     @Override
@@ -83,7 +109,7 @@ public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnIte
 
     @Override
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -144,5 +170,17 @@ public class FragmentQuotes extends FragmentWrapper implements AdapterView.OnIte
     @Override
     public void afterTextChanged(Editable s) {
         populateQuotes();
+    }
+
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_SYNCED_QUOTES)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCTS)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCT_GROUPS)
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_CATEGORY)) {
+                onPerformPartialSync();
+            }
+        }
     }
 }

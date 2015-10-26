@@ -109,6 +109,7 @@ public class DialogConfigOrderedItem extends Dialog implements View.OnClickListe
 
     private void addItems() {
         getUtils().getTransactionsManager().addOrderedItems(productId, itemsQuantity + Integer.parseInt(mEditItems.getText().toString()));
+        dismiss();
     }
 
     private void removeItems() {

@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.origicheck.africababa.R;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.datamodels.locations.LocationsInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_locations);
     }
+
     @Override
     public void receiveBundle() {
 
@@ -70,6 +72,22 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
     }
 
     @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.syncLocations();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+        populateLocations();
+    }
+
+    @Override
     public void onPauseFragment() {
 
     }
@@ -89,6 +107,10 @@ public class FragmentLocations extends FragmentWrapper implements AdapterView.On
         mLocationsListView.setOnItemClickListener(this);
 
         locationsInfos = getUtils().getTransactionsManager().getLocationInfos();
+        populateLocations();
+    }
+
+    private void populateLocations() {
         mLocations = getUtils().getViewCreator().getLocationsList(locationsInfos);
         mLocationsListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mLocations));
     }

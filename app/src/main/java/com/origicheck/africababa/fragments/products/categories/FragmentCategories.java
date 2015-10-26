@@ -1,5 +1,9 @@
 package com.origicheck.africababa.fragments.products.categories;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,7 +16,9 @@ import android.widget.ListView;
 
 import com.origicheck.africababa.R;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
+import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.products.categories.ProductCategoriesInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 
@@ -26,10 +32,12 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
     private ListView mCategoriesListView;
     private List<ProductCategoriesInfo> productCategoriesInfos;
     private List<String> productCategories;
+    private Receiver receiver;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-
+        receiver = new Receiver();
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_CATEGORY));
     }
 
     @NonNull
@@ -37,6 +45,7 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
     public String getActivityTitle() {
         return getActivity().getResources().getString(R.string.title_fragment_product_categories);
     }
+
     @Override
     public void receiveBundle() {
 
@@ -55,7 +64,6 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
 
     }
 
-
     @Override
     public void onAttachFragment() {
         onProductCategoryClick = (OnProductCategoryClick) getActivity();
@@ -67,13 +75,29 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
     }
 
     @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.syncCategory();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+        populateProductCategories();
+    }
+
+    @Override
     public void onPauseFragment() {
 
     }
 
     @Override
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -104,8 +128,16 @@ public class FragmentCategories extends FragmentWrapper implements AdapterView.O
         mCategoriesListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, productCategories));
     }
 
-
     public interface OnProductCategoryClick {
         void onProductCategoryClick(int productCategory);
+    }
+
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_SYNCED_CATEGORY)) {
+                onPerformPartialSync();
+            }
+        }
     }
 }

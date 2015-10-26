@@ -24,6 +24,7 @@ import com.origicheck.africababa.adapters.dashboard.DashboardAdapter;
 import com.origicheck.africababa.controller.fragments.FragmentWrapper;
 import com.origicheck.africababa.controller.intents.Intents;
 import com.origicheck.africababa.datamodels.dashboard.DashboardInfo;
+import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
 import java.util.Random;
@@ -127,6 +128,22 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
     public void onResumeFragment() {
         populateDashboardItems();
         getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SHOW_NEXT_CAROUSEL_IMAGE));
+    }
+
+    @Override
+    public void performPartialSync() {
+        if (getUtils().getUserAccountsManager().isExistsUserAccount()) {
+            if (getUtils().getPrefsManager().isLoggedIn()) {
+                //FORCE A SYNC
+                SyncExecutorThread syncExecutor = new SyncExecutorThread(getActivity(), getUtils());
+                syncExecutor.start();
+            }
+        }
+    }
+
+    @Override
+    public void onPerformPartialSync() {
+
     }
 
 

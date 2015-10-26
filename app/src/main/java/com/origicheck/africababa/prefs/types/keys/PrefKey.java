@@ -74,4 +74,5 @@ public class PrefKey {
     public static final String WEBSITE = "website";
 
 
+    public static final String SERVER_URL = "http://192.168.43.47/africababa";
 }
