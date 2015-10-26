@@ -4,8 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,7 +15,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
 
 import com.origicheck.africababa.R;
 import com.origicheck.africababa.adapters.dashboard.DashboardAdapter;
@@ -27,36 +24,19 @@ import com.origicheck.africababa.datamodels.dashboard.DashboardInfo;
 import com.origicheck.africababa.sync.worker.SyncExecutorThread;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by victor on 10/1/2015.
  */
 public class FragmentDashboard extends FragmentWrapper implements AdapterView.OnItemClickListener, CompoundButton.OnCheckedChangeListener {
+    int currentImagePosition = 0;
     private Receiver receiver;
-
     private View mDashboardView;
     private LinearLayout mSliderView;
     private ListView mDashboardItemsListView;
-
     private ImageView mSliderImages;
-
     private List<DashboardInfo> dashboardInfos;
-
     private OnDashboardListItemClick onDashboardListItemClick;
-
-    @NonNull
-    private int[] carouselImages = {
-            R.drawable.image_1,
-            R.drawable.image_2,
-            R.drawable.image_3,
-            R.drawable.image_4,
-            R.drawable.image_5
-    };
-
-    private RadioButton radioButton1, radioButton2, radioButton3, radioButton4, radioButton5;
-
-    private RadioButton[] radioButtons;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
@@ -75,7 +55,6 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
         initChildViews(mDashboardView);
         getContainer().addView(mDashboardView);
     }
-
 
     @NonNull
     @Override
@@ -96,22 +75,7 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
 
         mSliderImages = (ImageView) getParentView().findViewById(R.id.fragment_dashboard_imageView_carousel_image);
 
-        radioButton1 = (RadioButton) getParentView().findViewById(R.id.radioButton1);
-        radioButton2 = (RadioButton) getParentView().findViewById(R.id.radioButton2);
-        radioButton3 = (RadioButton) getParentView().findViewById(R.id.radioButton3);
-        radioButton4 = (RadioButton) getParentView().findViewById(R.id.radioButton4);
-        radioButton5 = (RadioButton) getParentView().findViewById(R.id.radioButton5);
-
-        radioButton1.setOnCheckedChangeListener(this);
-        radioButton2.setOnCheckedChangeListener(this);
-        radioButton3.setOnCheckedChangeListener(this);
-        radioButton4.setOnCheckedChangeListener(this);
-        radioButton5.setOnCheckedChangeListener(this);
-
         changeCarouselImage(true);
-
-        radioButtons = new RadioButton[]{radioButton1, radioButton2, radioButton3, radioButton4, radioButton5};
-
 
     }
 
@@ -146,7 +110,6 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
 
     }
 
-
     @Override
     public void onPauseFragment() {
         getActivity().unregisterReceiver(receiver);
@@ -174,73 +137,41 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (!isChecked) {
-            return;
-        }
-        if (buttonView == radioButton1) {
-            setSliderImage(0);
 
-        }
-        if (buttonView == radioButton2) {
-            setSliderImage(1);
-        }
-        if (buttonView == radioButton3) {
-            setSliderImage(2);
-        }
-        if (buttonView == radioButton4) {
-            setSliderImage(3);
-        }
-        if (buttonView == radioButton5) {
-            setSliderImage(4);
-        }
     }
 
     private void changeCarouselImage(boolean firstRun) {
-        if (firstRun) {
-            setSliderImage(-1);
-        }
-        radioButton1.setChecked(false);
-        radioButton2.setChecked(false);
-        radioButton3.setChecked(false);
-        radioButton4.setChecked(false);
-        radioButton5.setChecked(false);
 
-        int i = new Random().nextInt(5);
+        setCurrentImagePosition(getCurrentImagePosition() + 1);
 
-        if (i == 0) {
-            radioButton1.setChecked(true);
-        }
-        if (i == 1) {
-            radioButton2.setChecked(true);
-        }
-        if (i == 2) {
-
-            radioButton3.setChecked(true);
-        }
-        if (i == 3) {
-            radioButton4.setChecked(true);
-        }
-        if (i == 4) {
-            radioButton5.setChecked(true);
+        if (getCurrentImagePosition() >= getSliderImages().length) {
+            setCurrentImagePosition(0);
         }
 
+        setSliderImage(getSliderImages()[getCurrentImagePosition()]);
     }
 
-    private void setSliderImage(int i) {
-        if (i == -1) {
+    public int getCurrentImagePosition() {
+        return currentImagePosition;
+    }
 
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.canon5d);
-            return;
+    public void setCurrentImagePosition(int currentImagePosition) {
+        this.currentImagePosition = currentImagePosition;
+    }
 
-        } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), getSliderImages()[i]);
-            mSliderImages.setImageBitmap(bitmap);
-        }
+    private void setSliderImage(int fileId) {
+        mSliderImages.setImageBitmap(getUtils().getFileBitmap(fileId));
     }
 
     @NonNull
     private int[] getSliderImages() {
-        return carouselImages;
+        int[] sliderImages = getUtils().getTransactionsManager().getQuickSaleItemsImagesId();
+        if (sliderImages.length > 0) {
+            mSliderImages.setVisibility(View.VISIBLE);
+        } else {
+            mSliderImages.setVisibility(View.INVISIBLE);
+        }
+        return sliderImages;
     }
 
     public interface OnDashboardListItemClick {
@@ -252,6 +183,9 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
         public void onReceive(Context context, @NonNull Intent intent) {
             if (intent.getAction().equals(Intents.ACTION_SHOW_NEXT_CAROUSEL_IMAGE)) {
                 changeCarouselImage(false);
+            }
+            if (intent.getAction().equals(Intents.ACTION_SYNCED_FILES) || intent.getAction().equals(Intents.ACTION_SYNCED_QUICK_SALES)) {
+                getSliderImages();
             }
         }
     }

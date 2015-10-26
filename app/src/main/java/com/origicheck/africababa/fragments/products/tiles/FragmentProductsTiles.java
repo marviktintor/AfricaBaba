@@ -110,6 +110,7 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
         getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCTS));
         getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_PRODUCT_GROUPS));
         getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_CATEGORY));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_DOWNLOADED_FILE));
 
         populateProducts(mSearchProducts.getText().toString());
     }
@@ -252,7 +253,8 @@ public class FragmentProductsTiles extends FragmentWrapper implements View.OnCli
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCTS)
                     || intent.getAction().equals(Intents.ACTION_SYNCED_PRODUCT_GROUPS)
-                    || intent.getAction().equals(Intents.ACTION_SYNCED_CATEGORY)) {
+                    || intent.getAction().equals(Intents.ACTION_SYNCED_CATEGORY)
+                    || intent.getAction().equals(Intents.ACTION_DOWNLOADED_FILE)) {
                 onPerformPartialSync();
             }
         }

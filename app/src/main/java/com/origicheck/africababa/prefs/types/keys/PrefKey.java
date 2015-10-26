@@ -1,5 +1,7 @@
 package com.origicheck.africababa.prefs.types.keys;
 
+import android.os.Environment;
+
 /**
  * Created by victor on 10/22/2015.
  */
@@ -75,4 +77,6 @@ public class PrefKey {
 
 
     public static final String SERVER_URL = "http://192.168.43.47/africababa";
+
+    public static String GET_FILES_STORAGE_DIRECTORY = Environment.getExternalStorageDirectory() + "/AfricaBaba/files/";
 }

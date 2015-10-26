@@ -37,6 +37,7 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
         receiver = new Receiver();
         getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_NEW_ORDERED_ITEM));
         getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SYNCED_ORDERS));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_DOWNLOADED_FILE));
     }
 
     @NonNull
@@ -141,6 +142,7 @@ public class FragmentOrderedItems extends FragmentWrapper implements AdapterView
             }
             if (intent.getAction().equals(Intents.ACTION_SYNCED_ORDERS)
                     || intent.getAction().equals(Intents.ACTION_SYNCED_SUPPLIERS)
+                    || intent.getAction().equals(Intents.ACTION_DOWNLOADED_FILE)
                     ) {
                 populateOrderedItems();
             }

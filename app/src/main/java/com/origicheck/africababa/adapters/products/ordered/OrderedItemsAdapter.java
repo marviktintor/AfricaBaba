@@ -1,8 +1,6 @@
 package com.origicheck.africababa.adapters.products.ordered;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -112,19 +110,9 @@ public class OrderedItemsAdapter extends BaseAdapter {
         }
 
         public void setProductIcon(int position) {
-            int[] carouselImages = {
-                    R.drawable.image_1,
-                    R.drawable.image_2,
-                    R.drawable.image_3,
-                    R.drawable.image_4,
-                    R.drawable.image_5,
-                    R.drawable.canon5d
-            };
-            if (position < carouselImages.length) {
-                Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), carouselImages[position]);
-                mItemAvatar.setImageBitmap(bitmap);
-            }
-
+            int productId = getOrderedItemsInfos().get(position).getProductId();
+            int fileId = getUtils().getTransactionsManager().getTblProducts().getFileId(productId);
+            mItemAvatar.setImageBitmap(getUtils().getFileBitmap(fileId));
         }
     }
 }
