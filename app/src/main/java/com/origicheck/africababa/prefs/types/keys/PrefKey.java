@@ -76,7 +76,9 @@ public class PrefKey {
     public static final String WEBSITE = "website";
 
 
-    public static final String SERVER_URL = "http://192.168.43.47/africababa";
+    public static final String SERVER_URL = "http://africababasoko.com";
+
+    public static final int DEFAULT_NOTIFICATION_ID = 3358;
 
     public static String GET_FILES_STORAGE_DIRECTORY = Environment.getExternalStorageDirectory() + "/AfricaBaba/files/";
 }

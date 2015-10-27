@@ -8,14 +8,14 @@ import android.util.Log;
 import com.origicheck.africababa.controller.utils.Utils;
 import com.origicheck.africababa.prefs.types.keys.PrefKey;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -142,6 +142,10 @@ public class SyncExecutorThread extends Thread {
     public static final String POST_QUOTES_PARAM_PRODUCT_DESCRIPTION = "productDescription";
     public static final String POST_QUOTES_PARAM_PRODUCT_QUANTITY = "productQuantity";
     public static final String POST_QUOTES_PARAM_TIMESTAMP = "timestamp";
+
+    private static final String SYNC_RESULTS_SUCCESSFUL = "successful";
+    private static final String SYNC_RESULTS_FAILED = "failed";
+
     @Nullable
     private FormData mFormData = null;
     private Utils utils;
@@ -199,24 +203,38 @@ public class SyncExecutorThread extends Thread {
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
             StringBuffer stringBuffer = new StringBuffer();
-            String dataStream = "";
+            String dataStream = null;
             while ((dataStream = bufferedReader.readLine()) != null) {
                 stringBuffer.append(dataStream);
             }
 
-            Log.d("DATA_STREAM", stringBuffer.toString());
+            dataStream = stringBuffer.toString();
 
-            getUtils().getTransactionsManager().consumeSyncData(transactionHost, commitIntent, stringBuffer.toString());
+            Log.d("DATA_STREAM", dataStream);
 
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            printError("MalformedURLException -> " + e.getMessage());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            printError("IOException -> " + e.getMessage());
+            JSONObject _object = new JSONObject(dataStream);
 
+            String results = _object.getString("result");
+
+            if (results.equals(SyncExecutorThread.SYNC_RESULTS_FAILED)) {
+
+                String data = _object.getString("data");
+
+                if (data.equals("null")) {
+                    getUtils().getTransactionsManager().consumeNullSyncData(transactionHost, commitIntent, data);
+                } else {
+
+                    JSONObject errorObject = new JSONObject(data);
+                    String error = errorObject.getString("error");
+                    getUtils().showSyncErrorNotification(transactionHost, commitIntent, error);
+                }
+            }
+            if (results.equals(SyncExecutorThread.SYNC_RESULTS_SUCCESSFUL)) {
+                String data = _object.getString("data");
+                getUtils().getTransactionsManager().consumeSyncData(transactionHost, commitIntent, data);
+            }
+        } catch (Exception e) {
+            getUtils().showSyncErrorNotification(transactionHost, commitIntent, e.getMessage());
         }
 
     }

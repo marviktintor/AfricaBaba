@@ -147,8 +147,9 @@ public class FragmentDashboard extends FragmentWrapper implements AdapterView.On
         if (getCurrentImagePosition() >= getSliderImages().length) {
             setCurrentImagePosition(0);
         }
-
-        setSliderImage(getSliderImages()[getCurrentImagePosition()]);
+        if (getSliderImages().length > 0) {
+            setSliderImage(getSliderImages()[getCurrentImagePosition()]);
+        }
     }
 
     public int getCurrentImagePosition() {

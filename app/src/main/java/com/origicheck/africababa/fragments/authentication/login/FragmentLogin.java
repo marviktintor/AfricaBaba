@@ -1,5 +1,11 @@
 package com.origicheck.africababa.fragments.authentication.login;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,10 +38,13 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
     private OnClickSignup onClickSignup;
 
     private Bundle arguments;
+    private Receiver receiver;
+
+    private ProgressDialog mProgressDialog;
 
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-
+        receiver = new Receiver();
     }
 
     @Nullable
@@ -76,7 +85,8 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
 
     @Override
     public void onResumeFragment() {
-
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_LOGIN_FAILED));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_LOGIN_SUCCESSFUL));
     }
 
     @Override
@@ -102,7 +112,7 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
 
     @Override
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -126,8 +136,10 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
         mEtUsername = (EditText) loginView.findViewById(R.id.fragment_login_editText_username);
         mEtPassword = (EditText) loginView.findViewById(R.id.fragment_login_editText_password);
 
-        mEtUsername.setText("marviktintor");
-        mEtPassword.setText("marviktintor");
+        if (false) {
+            mEtUsername.setText("marviktintor");
+            mEtPassword.setText("marviktintor");
+        }
 
         mBtLogin = (Button) loginView.findViewById(R.id.fragment_login_button_login);
         mBtSignup = (Button) loginView.findViewById(R.id.fragment_login_button_signup);
@@ -150,6 +162,8 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
 
             getSyncExecutorThread().loginUser(username, password);
 
+            mProgressDialog = getUtils().showCustomProgressDialog("Logging in", "Please wait. We are connecting to your account", true);
+
         }
     }
 
@@ -165,4 +179,20 @@ public class FragmentLogin extends FragmentWrapper implements View.OnClickListen
         void onClickSignupButton(String userAvatar, String username, String password);
     }
 
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_LOGIN_SUCCESSFUL)) {
+                if (mProgressDialog != null) {
+                    if (mProgressDialog.isShowing()) {
+                        mProgressDialog.cancel();
+                    }
+                }
+            }
+            if (intent.getAction().equals(Intents.ACTION_LOGIN_FAILED)) {
+                String error = intent.getExtras().getString(Intents.EXTRA_SERVER_ERROR, Intents.EXTRA_UNKNOWN_SERVER_ERROR);
+                getUtils().showInfoDialog("Login failed!", "Could not login.\n Error : " + error, Color.RED, "Close", new Intent(Intents.ACTION_AFRICABABA_EMPTY_INTENT));
+            }
+        }
+    }
 }

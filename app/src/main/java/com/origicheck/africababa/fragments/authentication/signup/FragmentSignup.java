@@ -1,5 +1,11 @@
 package com.origicheck.africababa.fragments.authentication.signup;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,9 +44,13 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
 
     private OnSignupCallbacks onSignupCallbacks;
 
+    private Receiver receiver;
+
+    private ProgressDialog mProgressDialog;
+
     @Override
     public void onCreateFragment(@Nullable Bundle savedInstanceState) {
-
+        receiver = new Receiver();
     }
 
     @Override
@@ -81,7 +91,8 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
 
     @Override
     public void onResumeFragment() {
-
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SIGNUP_FAILED));
+        getActivity().registerReceiver(receiver, new IntentFilter(Intents.ACTION_SIGNUP_SUCCESSFUL));
     }
 
     @Override
@@ -108,7 +119,7 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
 
     @Override
     public void onDestroyFragment() {
-
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -133,12 +144,13 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
         mEtUsername = (EditText) signupView.findViewById(R.id.fragment_signup_editText_username);
         mEtPassword = (EditText) signupView.findViewById(R.id.fragment_signup_editText_password);
 
-        mEtFullname.setText("Marvik Tintor");
-        mEtEmail.setText("marviktintor@gmail.com");
-        mEtPhone.setText("0718034449");
-        mEtUsername.setText("marviktintor");
-        mEtPassword.setText("marviktintor");
-
+        if (false) {
+            mEtFullname.setText("Marvik Tintor");
+            mEtEmail.setText("marviktintor@gmail.com");
+            mEtPhone.setText("0718034449");
+            mEtUsername.setText("marviktintor");
+            mEtPassword.setText("marviktintor");
+        }
 
         mBtSignup = (Button) signupView.findViewById(R.id.fragment_signup_button_signup);
         mBtLogin = (Button) signupView.findViewById(R.id.fragment_signup_button_login);
@@ -154,6 +166,7 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
             e.printStackTrace();
         }
     }
+
     private void loginUser() {
         String username = getUtils().getString(mEtUsername);
         String password = getUtils().getString(mEtPassword);
@@ -173,7 +186,7 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
             String password = getUtils().getString(mEtPassword);
 
             getSyncExecutorThread().signupUsers(fullname, email, phonenumber, username, password);
-
+            mProgressDialog = getUtils().showCustomProgressDialog("Signing up", "Please wait. Your account is being created", true);
         }
     }
 
@@ -183,5 +196,21 @@ public class FragmentSignup extends FragmentWrapper implements View.OnClickListe
         void onSignup();
     }
 
+    private class Receiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intents.ACTION_SIGNUP_SUCCESSFUL)) {
+                if (mProgressDialog != null) {
+                    if (mProgressDialog.isShowing()) {
+                        mProgressDialog.cancel();
+                    }
+                }
+            }
+            if (intent.getAction().equals(Intents.ACTION_SIGNUP_FAILED)) {
+                String error = intent.getExtras().getString(Intents.EXTRA_SERVER_ERROR, Intents.EXTRA_UNKNOWN_SERVER_ERROR);
+                getUtils().showInfoDialog("Sign up failed!", "Could not signup.\n Error : " + error, Color.RED, "Close", new Intent(Intents.ACTION_AFRICABABA_EMPTY_INTENT));
+            }
+        }
+    }
 
 }
